@@ -5,6 +5,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
 import net.utsuro.mask.MaskingUtil.CharType;
 
+/**
+ * メールアドレスのランダム置換クラス.
+ */
 public class RandomMailAddrReplacer implements DataMask {
 
   private static final int RETRY_MAX = 5;
@@ -110,7 +113,6 @@ public class RandomMailAddrReplacer implements DataMask {
    * @param src 置換したい文字列
    * @param rule マスク化ルール
    * @return 置換後の文字列
-   * @throws Exception エラー発生時
    */
   public static String replace(String src, MaskingRule rule) {
 

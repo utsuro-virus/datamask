@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 型変換するクラス.
+ */
 public class TypeConverter implements DataMask {
 
   private static final DateTimeFormatter NUMYEAR_FORMATTER =

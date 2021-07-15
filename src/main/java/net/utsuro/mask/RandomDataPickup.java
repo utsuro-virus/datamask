@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * データのランダム選択クラス.
+ */
 public class RandomDataPickup implements DataMask {
 
   private Connection conn;

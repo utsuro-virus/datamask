@@ -5,6 +5,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
 import net.utsuro.mask.MaskingUtil.CharType;
 
+/**
+ * 文字列のランダム生成クラス.
+ */
 public class RandomTextGenerator implements DataMask {
 
   private static final int RETRY_MAX = 5;

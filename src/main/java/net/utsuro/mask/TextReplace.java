@@ -1,10 +1,13 @@
 package net.utsuro.mask;
 
+/**
+ * 文字列を置換するクラス.
+ */
 public class TextReplace implements DataMask {
 
   /**
    * 文字列を置換する.
-   * @see String#replaceAll
+   * @see "String#replaceAll"
    * @param src 置換したい値
    * @param rule マスク化ルール
    * @return 置換後の文字列
@@ -19,11 +22,10 @@ public class TextReplace implements DataMask {
 
   /**
    * 文字列を置換する.
-   * @see String#replaceAll
+   * @see "String#replaceAll"
    * @param src 置換したい値
    * @param rule マスク化ルール
    * @return 置換後の文字列
-   * @throws Exception エラー発生時
    */
   public static String replace(String src, MaskingRule rule) {
 

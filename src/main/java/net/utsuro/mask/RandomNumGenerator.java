@@ -3,6 +3,9 @@ package net.utsuro.mask;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * 数値のランダム生成クラス.
+ */
 public class RandomNumGenerator implements DataMask {
 
   /**
@@ -52,7 +55,6 @@ public class RandomNumGenerator implements DataMask {
    * @param src 置換したい文字列
    * @param rule マスク化ルール
    * @return 置換後の数値
-   * @throws Exception エラー発生時
    */
   public static BigDecimal generate(BigDecimal src, MaskingRule rule) {
 

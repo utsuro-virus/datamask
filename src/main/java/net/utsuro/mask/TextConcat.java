@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * 複数文字列を1つに結合するクラス.
+ */
 public class TextConcat implements DataMask {
 
   /**

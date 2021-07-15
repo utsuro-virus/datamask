@@ -8,6 +8,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 
+/**
+ * 氏名のランダム生成クラス.
+ */
 public class RandomFullNameGenerator implements DataMask {
 
   private static final int RETRY_MAX = 5;

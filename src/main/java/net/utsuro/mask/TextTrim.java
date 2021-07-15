@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * 前後の空白をTrimするクラス.
+ */
 public class TextTrim implements DataMask {
 
   /**
@@ -21,7 +24,6 @@ public class TextTrim implements DataMask {
    * @param src Trimしたい値
    * @param rule マスク化ルール
    * @return 置換後の文字列
-   * @throws Exception エラー発生時
    */
   public static String trim(String src, MaskingRule rule) {
 

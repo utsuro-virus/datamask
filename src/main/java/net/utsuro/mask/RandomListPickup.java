@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * リストのランダム選択クラス.
+ */
 public class RandomListPickup implements DataMask {
 
   private int[] weights = null;

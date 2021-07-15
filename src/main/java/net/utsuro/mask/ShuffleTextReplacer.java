@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * 文字列のシャッフル置換クラス.
+ */
 public class ShuffleTextReplacer implements DataMask {
 
   /**
@@ -24,8 +27,8 @@ public class ShuffleTextReplacer implements DataMask {
   /**
    * 文字列をシャッフル置換する.
    * @param src シャッフルしたい値
+   * @param rule マスク化ルール
    * @return シャッフル後の文字列
-   * @throws Exception エラー発生時
    */
   public static String replace(String src, MaskingRule rule) {
 

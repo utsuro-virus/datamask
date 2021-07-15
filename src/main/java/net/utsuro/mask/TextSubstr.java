@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * 部分文字列に置換するクラス.
+ */
 public class TextSubstr implements DataMask {
 
   /**
@@ -23,7 +26,6 @@ public class TextSubstr implements DataMask {
    * @param src 元の値
    * @param rule マスク化ルール
    * @return 置換後の文字列
-   * @throws Exception エラー発生時
    */
   public static String substr(String src, MaskingRule rule) {
 

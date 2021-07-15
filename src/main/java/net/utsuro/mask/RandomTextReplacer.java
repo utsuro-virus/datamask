@@ -5,6 +5,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.regex.Pattern;
 import net.utsuro.mask.MaskingUtil.CharType;
 
+/**
+ * 文字列のランダム置換クラス.
+ */
 public class RandomTextReplacer implements DataMask {
 
   private static final int RETRY_MAX = 5;

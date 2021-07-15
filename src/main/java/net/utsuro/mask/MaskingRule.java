@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import net.utsuro.mask.MaskingUtil.CharType;
 
+/**
+ * マスク化ルールを格納するクラス.
+ */
 @Data
 public class MaskingRule {
 
@@ -445,7 +448,7 @@ public class MaskingRule {
   /**
    * マスクしない文字数(右)を取得.
    * ※負の数を指定した場合はゼロに丸められる
-   * @param unmaksedLengthRight セットする unmaksedLengthRight
+   * @return unmaksedLengthRight
    */
   public int getUnmaksedLengthRight() {
     return Math.max(unmaksedLengthRight, 0);

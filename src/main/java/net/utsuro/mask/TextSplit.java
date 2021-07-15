@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * 文字列を分割するクラス.
+ */
 public class TextSplit implements DataMask {
 
   /**

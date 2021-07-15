@@ -1,5 +1,8 @@
 package net.utsuro.mask;
 
+/**
+ * Nullまたは空文字の場合に固定値に置換するクラス.
+ */
 public class NullToValue implements DataMask {
 
   /**

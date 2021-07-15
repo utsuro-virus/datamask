@@ -2,6 +2,9 @@ package net.utsuro.mask;
 
 import java.time.LocalDateTime;
 
+/**
+ * 日時を日付と時刻に分割するクラス.
+ */
 public class DateTimeSplit implements DataMask {
 
   /**

@@ -3,6 +3,9 @@ package net.utsuro.mask;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 固定値に置換するクラス.
+ */
 public class FixedValueConverter implements DataMask {
 
   /**

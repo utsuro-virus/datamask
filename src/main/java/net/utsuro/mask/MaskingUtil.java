@@ -16,6 +16,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * マスク化処理のユーティリティクラス.
+ */
 public abstract class MaskingUtil {
 
   /**
@@ -260,6 +263,7 @@ public abstract class MaskingUtil {
 
     /**
      * コード値を取得.
+     * @return コード値
      */
     public int getCode() {
       return code;
@@ -267,6 +271,7 @@ public abstract class MaskingUtil {
 
     /**
      * 名称を取得.
+     * @return 名称
      */
     public String getName() {
       return name;
@@ -274,6 +279,7 @@ public abstract class MaskingUtil {
 
     /**
      * 必要容量(SJIS換算byte数)を取得.
+     * @return 必要容量(SJIS換算byte数)
      */
     public int getReqByte() {
       return reqByte;
@@ -282,6 +288,7 @@ public abstract class MaskingUtil {
     /**
      * 文字列から文字種を取得.
      * @param str 任意の文字(概ね先頭1文字で判定)
+     * @return 判定した文字種
      */
     public static CharType getTypeByString(String str) {
       CharType ret = UNKNOWN;

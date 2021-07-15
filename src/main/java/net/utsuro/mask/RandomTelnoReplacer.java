@@ -5,6 +5,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.regex.Pattern;
 import net.utsuro.mask.MaskingUtil.CharType;
 
+/**
+ * 電話番号のランダム生成クラス.
+ */
 public class RandomTelnoReplacer implements DataMask {
 
   private static final int RETRY_MAX = 5;
@@ -98,7 +101,6 @@ public class RandomTelnoReplacer implements DataMask {
    * @param src 置換したい文字列
    * @param rule マスク化ルール
    * @return 置換後の文字列
-   * @throws Exception エラー発生時
    */
   public static String replace(String src, MaskingRule rule) {
 

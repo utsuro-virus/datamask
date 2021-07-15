@@ -5,6 +5,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 日付のランダム生成クラス.
+ */
 public class RandomDateGenerator implements DataMask {
 
   /**
@@ -49,7 +52,6 @@ public class RandomDateGenerator implements DataMask {
    * @param src 置換したい文字列
    * @param rule マスク化ルール
    * @return 置換後の日付
-   * @throws Exception エラー発生時
    */
   public static LocalDateTime generate(LocalDateTime src, MaskingRule rule) {
 

@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * データマスク処理のインターフェース.
+ */
 public interface DataMask {
 
   /**
    * このマスク処理でテータベースを使用するかどうか.
+   * @param rule マスク化ルール
    * @return true=使用する, false=使用しない
    */
   public default boolean useDatabase(MaskingRule rule) {

@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * クラス名から各データマスククラスのインスタンスを生成するファクトリクラス.
+ */
 public class DataMaskFactory {
 
   /**

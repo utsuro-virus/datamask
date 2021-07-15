@@ -9,6 +9,9 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
 
+/**
+ * 住所のランダム生成クラス.
+ */
 public class RandomAddressGenerator implements DataMask {
 
   private static final int RETRY_MAX = 5;

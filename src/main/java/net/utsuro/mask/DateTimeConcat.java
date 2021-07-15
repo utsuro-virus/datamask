@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * 日付と時刻を日時に結合するクラス.
+ */
 public class DateTimeConcat implements DataMask {
 
   /**

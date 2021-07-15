@@ -2,6 +2,9 @@ package net.utsuro.mask;
 
 import java.util.regex.Pattern;
 
+/**
+ * 文字列をパターンマスクするクラス.
+ */
 public class MaskedTextReplacer implements DataMask {
 
   /**
@@ -35,7 +38,6 @@ public class MaskedTextReplacer implements DataMask {
    * @param src マスクしたい文字列
    * @param rule マスク化ルール
    * @return マスク後の文字列
-   * @throws Exception エラー発生時
    */
   public static String replace(String src, MaskingRule rule) {
 
