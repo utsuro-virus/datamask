@@ -11,6 +11,42 @@ import java.util.regex.Pattern;
 
 /**
  * 住所のランダム生成クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>isUniqueValue</td><td>生成した値を一意にするかどうか(NULL以外)</td></tr>
+ * <tr><td>isDeterministicReplace</td><td>決定論的置換するかどうか ※INPUTが同じならOUTPUTも同じ値にする(NULL以外)</td></tr>
+ * <tr><td>uniqueId</td><td>決定論的/一意制管理の任意の識別子 ※カラム名で無くても良い</td></tr>
+ * <tr><td>addrFormat</td><td>住所生成時に返却する配列フォーマット(カンマ区切り) ※デフォルトは下記<br>
+ * [0] %zip        郵便番号<br>
+ * [1] %pref       都道府県<br>
+ * [2] %city       市区町村<br>
+ * [3] %town       町域<br>
+ * [4] %street     番地<br>
+ * [5] %prefKana   都道府県カナ<br>
+ * [6] %cityKana   市区町村カナ<br>
+ * [7] %townKana   町域カナ<br>
+ * [8] %streetKana 番地カナ</td></tr>
+ * <tr><td>selectListSeqNoColName</td><td>データ選択リストの連番カラム名 ※ランダム選択するためには対象テーブルには空き番の無い連番カラム(数値)が必要。指定が無い場合はデフォルトのseqnoとなる。</td></tr>
+ * <tr><td>usePostCodeFormat</td><td>住所生成時に郵便番号をハイフン付きにするかどうか</td></tr>
+ * <tr><td>useUpperCaseKana</td><td>生成時にカナを大文字にするかどうか</td></tr>
+ * <tr><td>useHalfKana</td><td>生成時にカナを半角にするかどうか</td></tr>
+ * <tr><td>useWideKana</td><td>生成時にカナを全角にするかどうか</td></tr>
+ * <tr><td>useBanchiGenerate</td><td>住所生成時に番地部分に元の値を使用するかどうか</td></tr>
+ * <tr><td>unmaksedLengthLeft</td><td>マスクしない文字数(左)</td></tr>
+ * <tr><td>unmaksedLengthRight</td><td>マスクしない文字数(右)</td></tr>
+ * <tr><td>useWhiteSpaceMask</td><td>全半角スペース、タブ、改行の置換有無</td></tr>
+ * <tr><td>useOddCharMask</td><td>奇数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useEvenCharMask</td><td>偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>randomGenCharType</td><td>ランダム生成文字の文字種 ※無指定は元の文字種と同じものを生成</td></tr>
+ * <tr><td>useUpperCase</td><td>置換時に英字を大文字にするかどうか</td></tr>
+ * <tr><td>useLowerCase</td><td>置換時に英字を小文字にするかどうか</td></tr>
+ * <tr><td>useAfterTextReplace</td><td>ランダムマスク後に置換マスクを使用するかどうか</td></tr>
+ * <tr><td>useAfterRepOddCharMask</td><td>マスク後の置換マスクで奇数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useAfterRepEvenCharMask</td><td>マスク後の置換マスクで偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * </table>
  */
 public class RandomAddressGenerator implements DataMask {
 

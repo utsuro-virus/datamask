@@ -2,6 +2,14 @@ package net.utsuro.mask;
 
 /**
  * Nullまたは空文字の場合に固定値に置換するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>toClassName</td><td>置換後のクラス名(必須)</td></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>fixedValue</td><td>固定値 ※システム日付をセットしたい場合は %sysdate を指定、タイムスタンプの場合は %systimestamp を指定する。</td></tr>
+ * </table>
  */
 public class NullToValue implements DataMask {
 

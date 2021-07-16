@@ -2,6 +2,13 @@ package net.utsuro.mask;
 
 /**
  * 部分文字列に置換するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>beginIndex</td><td>部分文字列取得時の開始インデックス。負数は末尾からn文字目として扱う。</td></tr>
+ * <tr><td>endIndex</td><td>部分文字列取得時の終了インデックス。指定なしや0の場合文字列末尾まで。</td></tr>
+ * </table>
  */
 public class TextSubstr implements DataMask {
 

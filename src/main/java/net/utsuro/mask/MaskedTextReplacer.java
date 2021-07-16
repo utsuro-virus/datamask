@@ -4,6 +4,23 @@ import java.util.regex.Pattern;
 
 /**
  * 文字列をパターンマスクするクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>unmaksedLengthLeft</td><td>マスクしない文字数(左)</td></tr>
+ * <tr><td>unmaksedLengthRight</td><td>マスクしない文字数(右)</td></tr>
+ * <tr><td>unmaksedCharPattern</td><td>マスクしない文字パターン(正規表現)</td></tr>
+ * <tr><td>useWhiteSpaceMask</td><td>全半角スペース、タブ、改行の置換有無</td></tr>
+ * <tr><td>useOddCharMask</td><td>奇数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useEvenCharMask</td><td>偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useEvenCharMask</td><td>偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>replacementWideNum</td><td>マスク時の置換文字列(全角数字) ※指定なしは"９"</td></tr>
+ * <tr><td>replacementWideChar</td><td>マスク時の置換文字列(全角) ※指定なしは"○"</td></tr>
+ * <tr><td>replacementHalfNum</td><td>マスク時の置換文字列(半角数字) ※指定なしは"9"</td></tr>
+ * <tr><td>replacementHalfChar</td><td>マスク時の置換文字列(半角) ※指定なしは"X"</td></tr>
+ * </table>
  */
 public class MaskedTextReplacer implements DataMask {
 

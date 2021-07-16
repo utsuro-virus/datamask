@@ -7,6 +7,17 @@ import java.util.regex.Pattern;
 
 /**
  * 日付のランダム生成クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>minDate</td><td>最小値(日付)</td></tr>
+ * <tr><td>maxDate</td><td>最大値(日付)</td></tr>
+ * <tr><td>termFrom</td><td>ランダム生成の期間FROM(日付) ※指定は元の値に加減算する 数値＋YMD で行う。負の数も指定可能。</td></tr>
+ * <tr><td>termTo</td><td>ランダム生成の期間TO(日付) ※指定は元の値に加減算する 数値＋YMD で行う。負の数も指定可能。</td></tr>
+ * </table>
  */
 public class RandomDateGenerator implements DataMask {
 

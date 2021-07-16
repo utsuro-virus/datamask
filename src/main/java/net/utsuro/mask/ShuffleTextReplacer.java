@@ -7,6 +7,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 文字列のシャッフル置換クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * </table>
  */
 public class ShuffleTextReplacer implements DataMask {
 

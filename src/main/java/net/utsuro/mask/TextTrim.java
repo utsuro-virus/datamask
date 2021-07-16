@@ -2,6 +2,14 @@ package net.utsuro.mask;
 
 /**
  * 前後の空白をTrimするクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isKeepWideSpaceTrim</td><td>半角スペースのみTrimするならtrueを指定</td></tr>
+ * <tr><td>useLTrim</td><td>LTrimをするならtrueを指定</td></tr>
+ * <tr><td>useRTrim</td><td>RTrimをするならtrueを指定</td></tr>
+ * </table>
  */
 public class TextTrim implements DataMask {
 

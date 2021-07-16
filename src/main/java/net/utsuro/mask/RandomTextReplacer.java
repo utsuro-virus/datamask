@@ -7,6 +7,31 @@ import net.utsuro.mask.MaskingUtil.CharType;
 
 /**
  * 文字列のランダム置換クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isUniqueValue</td><td>生成した値を一意にするかどうか(NULL以外)</td></tr>
+ * <tr><td>isDeterministicReplace</td><td>決定論的置換するかどうか ※INPUTが同じならOUTPUTも同じ値にする(NULL以外)</td></tr>
+ * <tr><td>uniqueId</td><td>決定論的/一意制管理の任意の識別子 ※カラム名で無くても良い</td></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>unmaksedLengthLeft</td><td>マスクしない文字数(左)</td></tr>
+ * <tr><td>unmaksedLengthRight</td><td>マスクしない文字数(右)</td></tr>
+ * <tr><td>unmaksedCharPattern</td><td>マスクしない文字パターン(正規表現)</td></tr>
+ * <tr><td>useWhiteSpaceMask</td><td>全半角スペース、タブ、改行の置換有無</td></tr>
+ * <tr><td>useOddCharMask</td><td>奇数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useEvenCharMask</td><td>偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>randomGenCharType</td><td>ランダム生成文字の文字種 ※無指定は元の文字種と同じものを生成</td></tr>
+ * <tr><td>randomNoGenCharPattern</td><td>ランダム生成しない文字パターン(正規表現) ※記号はOKでもカンマとかクォートはNGとか自動生成パスワードのlとIやOと0は見分けが付きにくいから除外とか</td></tr>
+ * <tr><td>useUpperCaseKana</td><td>置換時にカナを大文字にするかどうか</td></tr>
+ * <tr><td>useHalfKana</td><td>置換時にカナを半角にするかどうか</td></tr>
+ * <tr><td>useWideKana</td><td>置換時にカナを全角にするかどうか</td></tr>
+ * <tr><td>useUpperCase</td><td>置換時に英字を大文字にするかどうか</td></tr>
+ * <tr><td>useLowerCase</td><td>置換時に英字を小文字にするかどうか</td></tr>
+ * <tr><td>useAfterTextReplace</td><td>ランダムマスク後に置換マスクを使用するかどうか</td></tr>
+ * <tr><td>useAfterRepOddCharMask</td><td>マスク後の置換マスクで奇数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>useAfterRepEvenCharMask</td><td>マスク後の置換マスクで偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * </table>
  */
 public class RandomTextReplacer implements DataMask {
 

@@ -10,6 +10,22 @@ import java.text.Normalizer.Form;
 
 /**
  * 氏名のランダム生成クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>isUniqueValue</td><td>生成した値を一意にするかどうか(NULL以外)</td></tr>
+ * <tr><td>isDeterministicReplace</td><td>決定論的置換するかどうか ※INPUTが同じならOUTPUTも同じ値にする(NULL以外)</td></tr>
+ * <tr><td>uniqueId</td><td>決定論的/一意制管理の任意の識別子 ※カラム名で無くても良い</td></tr>
+ * <tr><td>fullNameFormat</td><td>個人名生成時に返却する配列フォーマット(カンマ区切り) ※デフォルトは下記<br>
+ * [0] %lastNameKanji %firstNameKanji 氏名漢字<br>
+ * [1] %lastNameKana %firstNameKana   氏名カナ</td></tr>
+ * <tr><td>selectListSeqNoColName</td><td>データ選択リストの連番カラム名 ※ランダム選択するためには対象テーブルには空き番の無い連番カラム(数値)が必要。指定が無い場合はデフォルトのseqnoとなる。</td></tr>
+ * <tr><td>useUpperCaseKana</td><td>生成時にカナを大文字にするかどうか</td></tr>
+ * <tr><td>useHalfKana</td><td>生成時にカナを半角にするかどうか</td></tr>
+ * <tr><td>useWideKana</td><td>生成時にカナを全角にするかどうか</td></tr>
+ * </table>
  */
 public class RandomFullNameGenerator implements DataMask {
 

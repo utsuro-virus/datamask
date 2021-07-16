@@ -2,6 +2,12 @@ package net.utsuro.mask;
 
 /**
  * 文字列を分割するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>separator</td><td>文字列分割時のセパレータ</td></tr>
+ * </table>
  */
 public class TextSplit implements DataMask {
 

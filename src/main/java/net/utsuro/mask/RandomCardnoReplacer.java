@@ -7,6 +7,18 @@ import net.utsuro.mask.MaskingUtil.CharType;
 
 /**
  * クレジットカード番号のランダム生成・置換クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isUniqueValue</td><td>生成した値を一意にするかどうか(NULL以外)</td></tr>
+ * <tr><td>isDeterministicReplace</td><td>決定論的置換するかどうか ※INPUTが同じならOUTPUTも同じ値にする(NULL以外)</td></tr>
+ * <tr><td>uniqueId</td><td>決定論的/一意制管理の任意の識別子 ※カラム名で無くても良い</td></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>unmaksedLengthLeft</td><td>マスクしない文字数(左)</td></tr>
+ * <tr><td>unmaksedLengthRight</td><td>マスクしない文字数(右)</td></tr>
+ * <tr><td>randomNoGenCharPattern</td><td>ランダム生成しない文字パターン(正規表現) ※記号はOKでもカンマとかクォートはNGとか自動生成パスワードのlとIやOと0は見分けが付きにくいから除外とか</td></tr>
+ * </table>
  */
 public class RandomCardnoReplacer implements DataMask {
 

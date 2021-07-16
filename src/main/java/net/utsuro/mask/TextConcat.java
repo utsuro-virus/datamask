@@ -2,6 +2,12 @@ package net.utsuro.mask;
 
 /**
  * 複数文字列を1つに結合するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>separator</td><td>文字列結合時のセパレータ</td></tr>
+ * </table>
  */
 public class TextConcat implements DataMask {
 

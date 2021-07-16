@@ -2,6 +2,14 @@ package net.utsuro.mask;
 
 /**
  * リストのランダム選択クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>picupList</td><td>ピックアップリスト</td></tr>
+ * <tr><td>picupWeights</td><td>ピックアップリストの重み(確率)</td></tr>
+ * </table>
  */
 public class RandomListPickup implements DataMask {
 

@@ -2,6 +2,13 @@ package net.utsuro.mask;
 
 /**
  * 文字列を置換するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>textReplaceRegex</td><td>文字列置換時の正規表現</td></tr>
+ * <tr><td>textReplacement</td><td>文字列置換時の置換文字列</td></tr>
+ * </table>
  */
 public class TextReplace implements DataMask {
 

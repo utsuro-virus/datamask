@@ -7,6 +7,16 @@ import java.sql.SQLException;
 
 /**
  * データのランダム選択クラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
+ * <tr><td>selectListTableName</td><td>データ選択リストの対象テーブル名</td></tr>
+ * <tr><td>selectListColName</td><td>データ選択リストの対象カラム名</td></tr>
+ * <tr><td>selectListSeqNoColName</td><td>データ選択リストの連番カラム名 ※ランダム選択するためには対象テーブルには空き番の無い連番カラム(数値)が必要。指定が無い場合はデフォルトのseqnoとなる。</td></tr>
+ * </table>
  */
 public class RandomDataPickup implements DataMask {
 

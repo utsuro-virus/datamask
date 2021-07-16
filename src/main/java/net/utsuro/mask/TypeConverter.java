@@ -23,6 +23,19 @@ import java.util.regex.Pattern;
 
 /**
  * 型変換するクラス.
+ *
+ * <table border="1" style="border-collapse: collapse;">
+ * <caption>利用可能なマスキングルール</caption>
+ * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>toClassName</td><td>型変換後のクラス名(必須)</td></tr>
+ * <tr><td>useUpperCaseKana</td><td>文字列to文字列の場合、カナ小文字とかな小文字を大文字にするならtrueを指定</td></tr>
+ * <tr><td>useHalfKana</td><td>文字列to文字列の場合、かなをカナにしてから半角カナにするならtrueを指定</td></tr>
+ * <tr><td>useWideKana</td><td>文字列to文字列の場合、半角カナは全角に、ひらがなはカナにするならtrueを指定</td></tr>
+ * <tr><td>useHiragana</td><td>文字列to文字列の場合、半角カナを全角にしてからひらがなにするならtrueを指定</td></tr>
+ * <tr><td>useUpperCase</td><td>文字列to文字列の場合、英小文字を大文字にするならtrueを指定</td></tr>
+ * <tr><td>useLowerCase</td><td>文字列to文字列の場合、英大文字を小文字にするならtrueを指定</td></tr>
+ * <tr><td>dateTimeFormat</td><td>from日付文字列の場合は入力値解析用の書式、to日付文字列の場合は返却時の書式を指定(DateTimeFormatter書式)</td></tr>
+ * </table>
  */
 public class TypeConverter implements DataMask {
 
