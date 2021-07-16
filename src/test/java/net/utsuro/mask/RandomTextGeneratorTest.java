@@ -498,8 +498,8 @@ class RandomTextGeneratorTest extends RandomTextGenerator {
         assertTrue(retList.indexOf(Integer.toString(i)) >= 0);
         // 1回は必ず登場する
         verify(converter, atLeast(1)).isExistsInUniqueList("HOGE", Integer.toString(i));
-        // 8回以上(80%)同じ値で呼ばれていたら偏りすぎ
-        verify(converter, atMost(9)).isExistsInUniqueList("HOGE", Integer.toString(i));
+        // 23回以上(50%)同じ値で呼ばれていたら偏りすぎ
+        verify(converter, atMost(22)).isExistsInUniqueList("HOGE", Integer.toString(i));
       }
     }
 
