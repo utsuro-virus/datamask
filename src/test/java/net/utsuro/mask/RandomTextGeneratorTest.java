@@ -380,7 +380,7 @@ class RandomTextGeneratorTest extends RandomTextGenerator {
       rule.setPrefix("おやつ");
       String ret = generate("1234XXXXXXXXXXXX", rule);
       // 「ヱ」「ヰ」「ヵ」「ヶ」「ヮ」が全角カナで生成されると半角変換不可なので許容する
-      assertTrue(ret.matches("^オヤツ[ァ-ン]+$"), String.format("[%s]はNG", ret));
+      assertTrue(ret.matches("^オヤツ[ァ-ンー]+$"), String.format("[%s]はNG", ret));
     }
 
     @Test
@@ -391,7 +391,7 @@ class RandomTextGeneratorTest extends RandomTextGenerator {
       rule.setPrefix("ｵﾔﾂ");
       String ret = generate("1234XXXXXXXXXXXX", rule);
       // 「ヱ」「ヰ」「ヵ」「ヶ」「ヮ」が全角カナで生成されると半角変換不可なので許容する
-      assertTrue(ret.matches("^おやつ[ぁ-ん]+$"), String.format("[%s]はNG", ret));
+      assertTrue(ret.matches("^おやつ[ぁ-んー]+$"), String.format("[%s]はNG", ret));
     }
 
     @Test
