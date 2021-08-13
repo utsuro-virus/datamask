@@ -151,7 +151,9 @@ public class DynamicExpression {
           obj = new ExpParameter(s.substring(1));
         } else if (s.startsWith("'") && s.endsWith("'")) {
           // 文字列
-          obj = s.substring(1, s.length() - 1).replaceAll("''", "'");
+          String buff = s.substring(1, s.length() - 1).replaceAll("''", "'");
+          // スペースをセットできないので特殊変数を使う
+          obj = buff.replaceAll("\\$\\{sp\\}", " ");
         } else if (s.matches("[-\\.0-9]+")) {
           // 数値
           obj = new BigDecimal(s);

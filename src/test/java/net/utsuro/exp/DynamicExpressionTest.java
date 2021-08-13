@@ -101,6 +101,17 @@ class DynamicExpressionTest extends DynamicExpression {
       assertEquals("'2", tree.getRoot().getDataB().getData());
     }
 
+    @Test
+    @DisplayName("文字列の'${sp}'は半角スペースに変換される")
+    void case7() {
+      tree.parse("'${sp}'=2");
+      assertEquals(String.class, tree.getRoot().getDataA().getData().getClass());
+      assertEquals(" ", tree.getRoot().getDataA().getData());
+      tree.parse("'${sp}abc${sp}'=2");
+      assertEquals(String.class, tree.getRoot().getDataA().getData().getClass());
+      assertEquals(" abc ", tree.getRoot().getDataA().getData());
+    }
+
   }
 
   @Nested
