@@ -480,6 +480,39 @@ public abstract class MaskingUtil {
   }
 
   /**
+   * バイト数(SJIS換算)で文字列を分割する.
+   * @param s 分割したい文字
+   * @param bytes 分割したいSJIS換算バイト数
+   * @return SJIS換算バイト数(全角2byte、半角1byte)で分割した文字列配列
+   */
+  public static String[] splitBySjisBytes(String s, int bytes) {
+    String[] ret = {null, null};
+    if (s != null) {
+      ret = new String[2];
+      int cnt = 0;
+      boolean isOverflow = false;
+      List<String> charList = Arrays.asList(s.split(""));
+      StringBuilder buff = new StringBuilder();
+      // 溢れるまで1文字ずつSJIS換算しながらバッファに格納
+      for (String c : charList) {
+        cnt += getSjisByteCount(c);
+        if (cnt <= bytes) {
+          buff.append(c);
+        } else {
+          isOverflow = true;
+          break;
+        }
+      }
+      ret[0] = buff.toString();
+      // 溢れていたら残りを2枠目にセット
+      if (isOverflow) {
+        ret[1] = s.substring(buff.length());
+      }
+    }
+    return ret;
+  }
+
+  /**
    * 半角カナ小文字を大文字にして返す.
    * @param s 対象の文字
    * @return 置換後の文字

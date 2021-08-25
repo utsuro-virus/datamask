@@ -270,9 +270,29 @@ public class MaskingRule {
    *  [6] %cityKana   市区町村カナ
    *  [7] %townKana   町域カナ
    *  [8] %streetKana 番地カナ
+   *  [9] %jisKenCode JIS都道府県コード(2桁)
+   *  [10] %jisCityCode JIS市区町村コード(5桁)
+   *  [11] %jisCityShortCode JIS市区町村コード(3桁)
+   *  [12] %addrCode 住所コード
    */
   private String addrFormat =
-      "%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana";
+      "%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana,%jisKenCode,%jisCityCode,%jisCityShortCode,%addrCode";
+
+  /**
+   * 住所生成時に返却する配列ごとのSJIS換算byte数指定.
+   * ※指定の長さを超過した場合デフォルトではカットする。
+   *  長さ指定が0の場合は無制限。
+   *  shiftOverflowStringsを指定することで次の枠の先頭に付与することも可能。
+   */
+  private int[] maxSjisByteCounts = null;
+
+  /**
+   * 住所生成時に返却する配列ごとの桁溢れ時に次の枠にシフトさせるかどうか.
+   * ※maxSjisByteCounts指定の長さを超過した場合デフォルトではカットする。
+   *  trueを指定することで次の枠の先頭に付与する。
+   *  最後の枠の場合はtrueを指定してもカットする。
+   */
+  private boolean[] shiftOverflowStrings = null;
 
   /**
    * 個人名生成時に返却する配列フォーマット(カンマ区切り).

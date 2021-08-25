@@ -28,7 +28,12 @@ import java.util.regex.Pattern;
  * [5] %prefKana   都道府県カナ<br>
  * [6] %cityKana   市区町村カナ<br>
  * [7] %townKana   町域カナ<br>
- * [8] %streetKana 番地カナ</td></tr>
+ * [8] %streetKana 番地カナ<br>
+ * [9] %jisKenCode JIS都道府県コード(2桁)<br>
+ * [10] %jisCityCode JIS市区町村コード(5桁)<br>
+ * [11] %jisCityShortCode JIS市区町村コード(3桁)<br>
+ * [12] %addrCode 住所コード<br>
+ * </td></tr>
  * <tr><td>selectListSeqNoColName</td><td>データ選択リストの連番カラム名 ※ランダム選択するためには対象テーブルには空き番の無い連番カラム(数値)が必要。指定が無い場合はデフォルトのseqnoとなる。</td></tr>
  * <tr><td>usePostCodeFormat</td><td>住所生成時に郵便番号をハイフン付きにするかどうか</td></tr>
  * <tr><td>useUpperCaseKana</td><td>生成時にカナを大文字にするかどうか</td></tr>
@@ -46,6 +51,8 @@ import java.util.regex.Pattern;
  * <tr><td>useAfterTextReplace</td><td>ランダムマスク後に置換マスクを使用するかどうか</td></tr>
  * <tr><td>useAfterRepOddCharMask</td><td>マスク後の置換マスクで奇数目の文字のみマスクするパターンの使用有無</td></tr>
  * <tr><td>useAfterRepEvenCharMask</td><td>マスク後の置換マスクで偶数目の文字のみマスクするパターンの使用有無</td></tr>
+ * <tr><td>maxSjisByteCounts</td><td>住所生成時に返却する配列ごとのSJIS換算byte数をint配列で指定</td></tr>
+ * <tr><td>shiftOverflowStrings</td><td>住所生成時に返却する配列ごとの桁溢れ時に次の枠にシフトさせるかどうかをbool配列で指定</td></tr>
  * </table>
  */
 public class RandomAddressGenerator implements DataMask {
@@ -267,6 +274,15 @@ public class RandomAddressGenerator implements DataMask {
           addrBuff = addrBuff.replaceAll("%town",
               rs.getString("town_name").concat(
                   (rs.getString("block_name") == null) ? "" : rs.getString("block_name")));
+          // JIS都道府県コード
+          addrBuff = addrBuff.replaceAll("%jisKenCode", String.format("%02d", rs.getInt("ken_id")));
+          // JIS市区町村コード(5桁)
+          addrBuff = addrBuff.replaceAll("%jisCityCode", String.format("%05d", rs.getInt("city_id")));
+          // JIS市区町村コード(3桁)
+          addrBuff = addrBuff.replaceAll("%jisCityShortCode", String.format("%05d", rs.getInt("city_id")).substring(2));
+          // 住所コード
+          addrBuff = addrBuff.replaceAll("%addrCode", String.format("%09d", rs.getInt("id")));
+
         } else {
           // データが無い場合はnullを返却
           return null;
@@ -329,6 +345,27 @@ public class RandomAddressGenerator implements DataMask {
         } else {
           // 番地をランダム生成したものに差し替え
           ret[i] = ret[i].replaceAll("%street", street);
+        }
+      }
+    }
+
+    // 文字列長さ調整
+    if (rule.getMaxSjisByteCounts() != null && rule.getMaxSjisByteCounts().length > 0) {
+      for (int i = 0; i < ret.length; i++) {
+        int byteCount = 0;
+        boolean isShiftOverflow = false;
+        if (rule.getMaxSjisByteCounts().length > i) {
+          byteCount = rule.getMaxSjisByteCounts()[i];
+        }
+        if (rule.getShiftOverflowStrings() != null && rule.getShiftOverflowStrings().length > i) {
+          isShiftOverflow = rule.getShiftOverflowStrings()[i];
+        }
+        if (byteCount > 0) {
+          String[] buff = MaskingUtil.splitBySjisBytes(ret[i], byteCount);
+          ret[i] = buff[0];
+          if (isShiftOverflow && buff[1] != null && i < ret.length - 1) {
+            ret[i + 1] = buff[1].concat(ret[i + 1]);
+          }
         }
       }
     }

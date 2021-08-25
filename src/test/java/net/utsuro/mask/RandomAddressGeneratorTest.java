@@ -443,6 +443,12 @@ class RandomAddressGeneratorTest extends RandomAddressGenerator {
       when(mockResultSet.getString("town_name")).thenReturn("北二条西");
       // 字丁目
       when(mockResultSet.getString("block_name")).thenReturn("２７丁目");
+      // 都道府県コード
+      when(mockResultSet.getInt("ken_id")).thenReturn(1);
+      // 市区町村コード
+      when(mockResultSet.getInt("city_id")).thenReturn(1101);
+      // 住所コード
+      when(mockResultSet.getInt("id")).thenReturn(60872100);
       // コネクションをセット
       setConnection(mockConn);
     }
@@ -657,6 +663,67 @@ class RandomAddressGeneratorTest extends RandomAddressGenerator {
       assertEquals("北二条西２７丁目", ret[3]);
       assertEquals("", ret[4]);
     }
+
+    @Test
+    @DisplayName("ランダムセレクト(コード類)")
+    void case11() throws Exception {
+      String[] params = new String[] {
+          "01", "01101", "101", "123456", "123-0001",
+          "ダミー県", "ダミー市", "ダミー町", "ダミー番地１－２－３",
+          "ダミーケン", "ダミーシ", "ダミーチョウ", "ダミーバンチ１－２－３"};
+      rule.setAddrFormat("%jisKenCode,%jisCityCode,%jisCityShortCode,%addrCode,%zip");
+      rule.useWideKana(true);
+      String[] ret = generate(params, rule);
+      assertEquals("01", ret[0]);
+      assertEquals("01101", ret[1]);
+      assertEquals("101", ret[2]);
+      assertEquals("060872100", ret[3]);
+      assertEquals("064-0822", ret[4]);
+    }
+
+    @Test
+    @DisplayName("SJIS換算文字列長さ指定(カット)")
+    void case12() throws Exception {
+      String[] params = new String[] {
+          "123-0001",
+          "ダミー県", "ダミー市", "ダミー町", "ダミー番地１－２－３",
+          "ダミーケン", "ダミーシ", "ダミーチョウ", "ダミーバンチ１－２－３"};
+      rule.setAddrFormat("%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana");
+      rule.setMaxSjisByteCounts(new int[] {0, 2, 2, 2});
+      String[] ret = generate(params, rule);
+      assertEquals("064-0822", ret[0]);
+      assertEquals("北", ret[1]);
+      assertEquals("札", ret[2]);
+      assertEquals("北", ret[3]);
+      assertNotEquals("ダミー番地１－２－３", ret[4]);
+      assertEquals("ほっかいどう", ret[5]);
+      assertEquals("さっぽろしちゅうおうく", ret[6]);
+      assertEquals("きた０２じょうにし２７ちょうめ", ret[7]);
+      assertNotEquals("ダミーバンチ１－２－３", ret[8]);
+    }
+
+    @Test
+    @DisplayName("SJIS換算文字列長さ指定(シフト)")
+    void case13() throws Exception {
+      String[] params = new String[] {
+          "123-0001",
+          "ダミー県", "ダミー市", "ダミー町", "ダミー番地１－２－３",
+          "ダミーケン", "ダミーシ", "ダミーチョウ", "ダミーバンチ１－２－３"};
+      rule.setAddrFormat("%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana");
+      rule.setMaxSjisByteCounts(new int[] {0, 2, 2, 2, 2});
+      rule.setShiftOverflowStrings(new boolean[] {false, true, true, false, false});
+      String[] ret = generate(params, rule);
+      assertEquals("064-0822", ret[0]);
+      assertEquals("北", ret[1]);
+      assertEquals("海", ret[2]);
+      assertEquals("道", ret[3]);
+      assertNotEquals("ダミー番地１－２－３", ret[4]);
+      assertEquals("ほっかいどう", ret[5]);
+      assertEquals("さっぽろしちゅうおうく", ret[6]);
+      assertEquals("きた０２じょうにし２７ちょうめ", ret[7]);
+      assertNotEquals("ダミーバンチ１－２－３", ret[8]);
+    }
+
   }
 
 }

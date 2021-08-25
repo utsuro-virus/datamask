@@ -135,6 +135,98 @@ class MaskingUtilTest extends MaskingUtil {
   }
 
   @Nested
+  @DisplayName("method: getSjisByteCount")
+  class GetSjisByteCount {
+
+    @Test
+    @DisplayName("半角文字は1が返る")
+    void case1() {
+      assertEquals(1, getSjisByteCount("1"));
+    }
+
+    @Test
+    @DisplayName("全角文字は2が返る")
+    void case2() {
+      assertEquals(2, getSjisByteCount("あ"));
+    }
+
+    @Test
+    @DisplayName("半角1byte全角2byte換算で文字列長さを返す")
+    void case3() {
+      assertEquals(10, getSjisByteCount("あ123ｱ漢字"));
+    }
+
+  }
+
+  @Nested
+  @DisplayName("method: splitBySjisBytes")
+  class SplitBySjisBytes {
+
+    @Test
+    @DisplayName("半角文字は1byte換算で分割される")
+    void case1() {
+      String[] ret = splitBySjisBytes("12345ABCD", 5);
+      assertEquals(2, ret.length);
+      assertEquals("12345", ret[0]);
+      assertEquals("ABCD", ret[1]);
+    }
+
+    @Test
+    @DisplayName("半角文字は2byte換算で分割される")
+    void case2() {
+      String[] ret = splitBySjisBytes("１２３４５ＡＢＣＤ", 10);
+      assertEquals(2, ret.length);
+      assertEquals("１２３４５", ret[0]);
+      assertEquals("ＡＢＣＤ", ret[1]);
+    }
+
+    @Test
+    @DisplayName("長さが足りない場合は2枠目はnull")
+    void case3() {
+      String[] ret = splitBySjisBytes("1234ＡＢＣＤ", 12);
+      assertEquals(2, ret.length);
+      assertEquals("1234ＡＢＣＤ", ret[0]);
+      assertEquals(null, ret[1]);
+      ret = splitBySjisBytes("1234ＡＢＣＤ", 13);
+      assertEquals(2, ret.length);
+      assertEquals("1234ＡＢＣＤ", ret[0]);
+      assertEquals(null, ret[1]);
+      ret = splitBySjisBytes("1234ＡＢＣDX", 11);
+      assertEquals(2, ret.length);
+      assertEquals("1234ＡＢＣD", ret[0]);
+      assertEquals("X", ret[1]);
+    }
+
+    @Test
+    @DisplayName("nullの場合は2枠ともnull")
+    void case4() {
+      String[] ret = splitBySjisBytes(null, 12);
+      assertEquals(2, ret.length);
+      assertEquals(null, ret[0]);
+      assertEquals(null, ret[1]);
+    }
+
+    @Test
+    @DisplayName("空文字の場合は1枠目は空文字、2枠目はnull")
+    void case5() {
+      String[] ret = splitBySjisBytes("", 12);
+      assertEquals(2, ret.length);
+      assertEquals("", ret[0]);
+      assertEquals(null, ret[1]);
+    }
+
+    @Test
+    @DisplayName("区切りが2byte文字の半欠けになる場合は前の文字で分割")
+    void case6() {
+      String[] ret = splitBySjisBytes("1234ＡＢＣＤ", 7);
+      assertEquals(2, ret.length);
+      assertEquals("1234Ａ", ret[0]);
+      assertEquals("ＢＣＤ", ret[1]);
+    }
+
+  }
+
+  @Nested
   @DisplayName("method: charTypeNormalize")
   class CharTypeNormalize {
 
