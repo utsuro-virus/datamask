@@ -149,6 +149,9 @@ public class DynamicExpression {
         if (s.startsWith("%")) {
           // 変数
           obj = new ExpParameter(s.substring(1));
+        } else if ("'${blank}'".equals(s)) {
+          // ブランク判定
+          obj = new BlankValue();
         } else if (s.startsWith("'") && s.endsWith("'")) {
           // 文字列
           String buff = s.substring(1, s.length() - 1).replaceAll("''", "'");
@@ -199,6 +202,30 @@ public class DynamicExpression {
      * パラメータ名.
      */
     private String name;
+
+  }
+
+  /**
+   * ブランク判定を行うため内部クラス.
+   */
+  public static class BlankValue {
+
+    /**
+     * ブランクかどうか判定する.
+     * ※null/空文字/全部半角スペース/BlankValueの場合にtrueとなる。
+     *  文字列/null/BlankValue以外はfalseとなる。
+     * @param tar 比較対象のオブジェクト
+     */
+    public boolean equals(Object tar) {
+      if (tar == null || (tar instanceof BlankValue)) {
+        return true;
+      }
+      if (!(tar instanceof String)) {
+        return false;
+      }
+      // 文字列なら空文字か全スペースは空白扱いする
+      return (((String) tar).isEmpty() || ((String) tar).isBlank());
+    }
 
   }
 
@@ -334,16 +361,32 @@ public class DynamicExpression {
         switch (operator) {
           case EQ:
             if (retA == null) {
-              ret = Boolean.valueOf(retA == retB);
+              if (retB instanceof BlankValue) {
+                ret = true;
+              } else {
+                ret = Boolean.valueOf(retA == retB);
+              }
             } else {
-              ret = Boolean.valueOf(retA.equals(retB));
+              if (retB instanceof BlankValue) {
+                ret = Boolean.valueOf(retB.equals(retA));
+              } else {
+                ret = Boolean.valueOf(retA.equals(retB));
+              }
             }
             break;
           case NE:
             if (retA == null) {
-              ret = Boolean.valueOf(retA != retB);
+              if (retB instanceof BlankValue) {
+                ret = false;
+              } else {
+                ret = Boolean.valueOf(retA != retB);
+              }
             } else {
-              ret = Boolean.valueOf(!retA.equals(retB));
+              if (retB instanceof BlankValue) {
+                ret = Boolean.valueOf(!retB.equals(retA));
+              } else {
+                ret = Boolean.valueOf(!retA.equals(retB));
+              }
             }
             break;
           case AND:
@@ -418,7 +461,7 @@ public class DynamicExpression {
           if (val instanceof Number) {
             // 数値の場合はBigDecimalに詰め替え
             val = new BigDecimal(val.toString());
-          } else if (!(val instanceof String)) {
+          } else if (val != null && !(val instanceof String)) {
             // Stringでも数値でもない値は非対応なのでtoString()してみる
             val = val.toString();
           }

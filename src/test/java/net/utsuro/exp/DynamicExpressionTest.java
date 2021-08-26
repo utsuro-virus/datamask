@@ -141,6 +141,26 @@ class DynamicExpressionTest extends DynamicExpression {
       assertFalse(tree.execute());
       tree.parse("1=null");
       assertFalse(tree.execute());
+      tree.parse("''='${blank}'");
+      assertTrue(tree.execute());
+      tree.parse("'${sp}'='${blank}'");
+      assertTrue(tree.execute());
+      tree.parse("'${blank}'='${blank}'");
+      assertTrue(tree.execute());
+      tree.parse("null='${blank}'");
+      assertTrue(tree.execute());
+      tree.parse("'abc'='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("123='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("'${blank}'=null");
+      assertTrue(tree.execute());
+      tree.parse("'${blank}'='abc'");
+      assertFalse(tree.execute());
+      tree.parse("'${blank}'=0");
+      assertFalse(tree.execute());
+      tree.parse("'${blank}'='0'");
+      assertFalse(tree.execute());
     }
 
     @Test
@@ -158,6 +178,18 @@ class DynamicExpressionTest extends DynamicExpression {
       assertFalse(tree.execute());
       tree.parse("null!=null");
       assertFalse(tree.execute());
+      tree.parse("''!='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("'${sp}'!='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("'${blank}'!='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("null!='${blank}'");
+      assertFalse(tree.execute());
+      tree.parse("'abc'!='${blank}'");
+      assertTrue(tree.execute());
+      tree.parse("123!='${blank}'");
+      assertTrue(tree.execute());
     }
 
     @Test
@@ -291,6 +323,9 @@ class DynamicExpressionTest extends DynamicExpression {
       params.put("f", -1);
       params.put("g", 2);
       params.put("h", 9);
+      params.put("i", "");
+      params.put("j", null);
+      params.put("k", "      ");
       tree.parse("%a == %b");
       assertTrue(tree.execute(params));
       tree.parse("%c != %d");
@@ -304,6 +339,14 @@ class DynamicExpressionTest extends DynamicExpression {
       tree.parse("%h < 10");
       assertTrue(tree.execute(params));
       tree.parse("%a == %b && (%c != %d || %e == 'hoge') && %f <= 0 && %g >= 1 && %h < 10");
+      assertTrue(tree.execute(params));
+      tree.parse("%i == '${blank}'");
+      assertTrue(tree.execute(params));
+      tree.parse("%h == '${blank}'");
+      assertFalse(tree.execute(params));
+      tree.parse("%j == '${blank}'");
+      assertTrue(tree.execute(params));
+      tree.parse("%k == '${blank}'");
       assertTrue(tree.execute(params));
     }
 
@@ -319,7 +362,18 @@ class DynamicExpressionTest extends DynamicExpression {
       params.put("f", 1L);
       params.put("g", 1L);
       params.put("h", 1L);
+      params.put("i", "");
+      params.put("j", null);
+      params.put("k", "      ");
       tree.parse("%a == %b && (%c != %d || %e == 'hoge') && %f <= 0 && %g >= 1 && %h < 10");
+      assertFalse(tree.execute(params));
+      tree.parse("%i != '${blank}'");
+      assertFalse(tree.execute(params));
+      tree.parse("%h != '${blank}'");
+      assertTrue(tree.execute(params));
+      tree.parse("%j != '${blank}'");
+      assertFalse(tree.execute(params));
+      tree.parse("%k != '${blank}'");
       assertFalse(tree.execute(params));
     }
   }
@@ -333,6 +387,25 @@ class DynamicExpressionTest extends DynamicExpression {
     void case1() {
       ExpParameter ep = new ExpParameter("hoge");
       assertEquals("hoge", ep.getName());
+    }
+
+  }
+
+  @Nested
+  @DisplayName("inner class: BlankValue")
+  class InnerClassBlankValue {
+
+    BlankValue blank = new BlankValue();
+
+    @Test
+    @DisplayName("method: equals")
+    void caseEquals() {
+      assertTrue(blank.equals(null));
+      assertTrue(blank.equals((Object) ""));
+      assertTrue(blank.equals((Object) "   "));
+      assertTrue(blank.equals(new BlankValue()));
+      assertFalse(blank.equals((Object) "a   "));
+      assertFalse(blank.equals((Object) Integer.valueOf(123)));
     }
 
   }
