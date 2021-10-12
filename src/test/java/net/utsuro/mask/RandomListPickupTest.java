@@ -80,7 +80,7 @@ class RandomListPickupTest extends RandomListPickup {
     @DisplayName("null置換ありでnullは処理される")
     void case3() throws Exception {
       rule.setNullReplace(true);
-      rule.setPicupList(new String[] {"hoge", "fuga"});
+      rule.setPickupList(new String[] {"hoge", "fuga"});
       assertNotEquals(null, execute(null, rule));
     }
 
@@ -96,8 +96,8 @@ class RandomListPickupTest extends RandomListPickup {
       String[] pickList = new String[] {"会長", "社長", "本部長", "部長", "課長", "係長", "社員"};
       int[] pickupWeights = new int[] {1, 1, 4, 10, 40, 80, 400};
       int total = Arrays.stream(pickupWeights).sum();
-      rule.setPicupList(pickList);
-      rule.setPicupWeights(pickupWeights);
+      rule.setPickupList(pickList);
+      rule.setPickupWeights(pickupWeights);
       int count = 3000; //試行回数
       Map<String, Integer> retMap = new HashMap<>();
       for (int i = 0; i < count; i++) {
@@ -130,7 +130,7 @@ class RandomListPickupTest extends RandomListPickup {
       String[] pickList = new String[] {"りんご", "みかん", "バナナ"};
       int[] pickupWeights = new int[] {1, 1, 1};
       int total = Arrays.stream(pickupWeights).sum();
-      rule.setPicupList(pickList);
+      rule.setPickupList(pickList);
       int count = 3000; //試行回数
       Map<String, Integer> retMap = new HashMap<>();
       for (int i = 0; i < count; i++) {
@@ -161,8 +161,8 @@ class RandomListPickupTest extends RandomListPickup {
     void case12() throws Exception {
       String[] pickList = new String[] {"りんご", "みかん", "バナナ", "もも"};
       int[] pickupWeights = new int[] {1, 1, 1};
-      rule.setPicupList(pickList);
-      rule.setPicupWeights(pickupWeights);
+      rule.setPickupList(pickList);
+      rule.setPickupWeights(pickupWeights);
       int count = 3000; //試行回数
       Map<String, Integer> retMap = new HashMap<>();
       for (int i = 0; i < count; i++) {

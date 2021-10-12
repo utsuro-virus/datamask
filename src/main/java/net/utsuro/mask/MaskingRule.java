@@ -186,12 +186,12 @@ public class MaskingRule {
   /**
    * ピックアップリスト.
    */
-  private String[] picupList = null;
+  private String[] pickupList = null;
 
   /**
    * ピックアップリストの重み(確率).
    */
-  private int[] picupWeights = null;
+  private int[] pickupWeights = null;
 
   /**
    * データ選択リストの対象テーブル名.
@@ -425,14 +425,14 @@ public class MaskingRule {
     this.maxDate = that.getMaxDate();
     this.termFrom = that.getTermFrom();
     this.termTo = that.getTermTo();
-    if (that.getPicupList() != null) {
-      this.picupList = new String[that.getPicupList().length];
-      System.arraycopy(that.getPicupList(), 0, this.picupList, 0, that.getPicupList().length);
+    if (that.getPickupList() != null) {
+      this.pickupList = new String[that.getPickupList().length];
+      System.arraycopy(that.getPickupList(), 0, this.pickupList, 0, that.getPickupList().length);
     }
-    if (that.getPicupWeights() != null) {
-      this.picupWeights = new int[that.getPicupWeights().length];
+    if (that.getPickupWeights() != null) {
+      this.pickupWeights = new int[that.getPickupWeights().length];
       System.arraycopy(
-          that.getPicupWeights(), 0, this.picupWeights, 0, that.getPicupWeights().length);
+          that.getPickupWeights(), 0, this.pickupWeights, 0, that.getPickupWeights().length);
     }
     this.selectListTableName = that.getSelectListTableName();
     this.selectListColName = that.getSelectListColName();

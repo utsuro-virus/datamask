@@ -539,6 +539,15 @@ class DynamicExpressionTest extends DynamicExpression {
       }
 
       @Test
+      @DisplayName("数値の比較時はスケールは無視")
+      void caseExecuteEQ5() {
+        en.appendVar("5.50");
+        en.appendVar(new BigDecimal("5.5"));
+        en.setOperator(Operator.EQ);
+        assertFalse((Boolean) en.execute(null));
+      }
+
+      @Test
       @DisplayName("同値でNEはFalse")
       void caseExecuteNE1() {
         en.appendVar(123456789L);

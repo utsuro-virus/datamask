@@ -7,8 +7,8 @@ package net.utsuro.mask;
  * <caption>利用可能なマスキングルール</caption>
  * <tr><th>プロパティ</th><th>説明</th></tr>
  * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
- * <tr><td>picupList</td><td>ピックアップリスト</td></tr>
- * <tr><td>picupWeights</td><td>ピックアップリストの重み(確率)</td></tr>
+ * <tr><td>pickupList</td><td>ピックアップリスト</td></tr>
+ * <tr><td>pickupWeights</td><td>ピックアップリストの重み(確率)</td></tr>
  * </table>
  */
 public class RandomListPickup implements DataMask {
@@ -31,27 +31,27 @@ public class RandomListPickup implements DataMask {
       return src;
     }
 
-    int picupListCount = (rule.getPicupList() == null) ? 0 : rule.getPicupList().length;
-    int weightsCount = (rule.getPicupWeights() == null) ? 0 : rule.getPicupWeights().length;
+    int pickupListCount = (rule.getPickupList() == null) ? 0 : rule.getPickupList().length;
+    int weightsCount = (rule.getPickupWeights() == null) ? 0 : rule.getPickupWeights().length;
 
-    if (picupListCount == 0) {
+    if (pickupListCount == 0) {
       // リストが設定されていない場合はそのまま返却
       return src;
     }
 
     if (weights == null) {
       // 未作成のときは重みリストの作成と重み合計値の計算
-      weights = new int[picupListCount];
-      for (int i = 0; i < picupListCount; i++) {
+      weights = new int[pickupListCount];
+      for (int i = 0; i < pickupListCount; i++) {
         // 重み指定がまったく無い場合は一律1をセット、足りない場合は0をセット
-        weights[i] = (weightsCount == 0) ? 1 : ((i < weightsCount) ? rule.getPicupWeights()[i] : 0);
+        weights[i] = (weightsCount == 0) ? 1 : ((i < weightsCount) ? rule.getPickupWeights()[i] : 0);
         totalWeight += weights[i];
       }
     }
 
     // 重み付きランダム取得のインデックスからリスト値を選択して返却
     int idx = MaskingUtil.getRandomIndex(weights, totalWeight);
-    return rule.getPicupList()[idx];
+    return rule.getPickupList()[idx];
 
   }
 

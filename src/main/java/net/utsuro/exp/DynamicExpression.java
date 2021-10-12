@@ -369,6 +369,8 @@ public class DynamicExpression {
             } else {
               if (retB instanceof BlankValue) {
                 ret = Boolean.valueOf(retB.equals(retA));
+              } else if (retA instanceof BigDecimal && retB instanceof BigDecimal) {
+                ret = Boolean.valueOf(((BigDecimal) retA).compareTo((BigDecimal) retB) == 0);
               } else {
                 ret = Boolean.valueOf(retA.equals(retB));
               }
@@ -384,6 +386,8 @@ public class DynamicExpression {
             } else {
               if (retB instanceof BlankValue) {
                 ret = Boolean.valueOf(!retB.equals(retA));
+              } else if (retA instanceof BigDecimal && retB instanceof BigDecimal) {
+                ret = Boolean.valueOf(((BigDecimal) retA).compareTo((BigDecimal) retB) != 0);
               } else {
                 ret = Boolean.valueOf(!retA.equals(retB));
               }

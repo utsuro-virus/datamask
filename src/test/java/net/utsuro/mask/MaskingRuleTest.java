@@ -36,8 +36,8 @@ class MaskingRuleTest extends MaskingRule {
       ruleB.setMaxDecimalValue(new BigDecimal("-1234567890"));
       ruleB.setMinDate(LocalDateTime.parse("2020-12-31T00:01:59"));
       ruleB.setMaxDate(LocalDateTime.parse("2021-01-16T18:56:01"));
-      ruleB.setPicupList(new String[] {"hoge", "fuga"});
-      ruleB.setPicupWeights(new int[] {1, 2});
+      ruleB.setPickupList(new String[] {"hoge", "fuga"});
+      ruleB.setPickupWeights(new int[] {1, 2});
       ruleB.setToClassNames(Arrays.asList(new String[] {"hogeClass", "fugaClass"}));
       assertNotEquals(ruleA, ruleB);
       ruleA = new MaskingRule(ruleB);
