@@ -183,7 +183,16 @@ class RandomFullNameGeneratorTest extends RandomFullNameGenerator {
       when(mockResultSet.next()).thenReturn(false);
 
       String[] ret3 = (String[]) converter.execute(new String[] {"岩鬼", "正美"}, rule);
+
+      // モックの設定: 4回目はTrimすれば値がある想定なのでレコードあり、さっき登録した値を返す
+      when(mockResultSet.next()).thenReturn(true);
+      when(mockResultSet.getString("output_val")).thenReturn(String.join("<>", ret1));
+
+      rule.setBeforeTrim(true);
+      String[] ret4 = (String[]) converter.execute(new String[] {" 山田 ", " 太郎     "}, rule);
+
       assertEquals(ret1[0], ret2[0], String.format("[%s]<>[%s]はNG", ret1[0], ret2[0]));
+      assertEquals(ret1[0], ret4[0], String.format("[%s]<>[%s]はNG", ret1[0], ret4[0]));
       assertFalse(ret1[0].equals(ret3[0]), String.format("[%s]=[%s]はNG", ret1[0], ret3[0]));
     }
 

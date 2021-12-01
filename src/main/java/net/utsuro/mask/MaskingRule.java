@@ -386,6 +386,11 @@ public class MaskingRule {
   private String textReplacement = "";
 
   /**
+   * 入力値を処理前にTrimするかどうか.
+   */
+  private boolean beforeTrim = false;
+
+  /**
    * デフォルトコンストラクタ.
    */
   public MaskingRule() {}
@@ -463,6 +468,7 @@ public class MaskingRule {
     this.endIndex = that.getEndIndex();
     this.textReplaceRegex = that.getTextReplaceRegex();
     this.textReplacement = that.getTextReplacement();
+    this.beforeTrim = that.isBeforeTrim();
   }
 
   /**

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Arrays;
 
 /**
  * 氏名のランダム生成クラス.
@@ -25,6 +26,10 @@ import java.text.Normalizer.Form;
  * <tr><td>useUpperCaseKana</td><td>生成時にカナを大文字にするかどうか</td></tr>
  * <tr><td>useHalfKana</td><td>生成時にカナを半角にするかどうか</td></tr>
  * <tr><td>useWideKana</td><td>生成時にカナを全角にするかどうか</td></tr>
+ * <tr><td>beforeTrim</td><td>入力値を処理前にTrimするかどうか</td></tr>
+ * <tr><td>isKeepWideSpaceTrim</td><td>beforeTrim指定時に半角スペースのみTrimするならtrueを指定</td></tr>
+ * <tr><td>useLTrim</td><td>beforeTrim指定時にLTrimをするならtrueを指定</td></tr>
+ * <tr><td>useRTrim</td><td>beforeTrim指定時にRTrimをするならtrueを指定</td></tr>
  * </table>
  */
 public class RandomFullNameGenerator implements DataMask {
@@ -77,8 +82,16 @@ public class RandomFullNameGenerator implements DataMask {
     String[] names = null;
     if (rule.isNullReplace() && src == null) {
       names = new String[0];
-    } else if (src instanceof String[]) {
-      names = (String[]) src;
+    } else if (src instanceof String[] || src instanceof Object[]) {
+      names = Arrays.copyOf((Object[]) src, ((Object[]) src).length, String[].class);
+      if (rule.isBeforeTrim()) {
+        // 入力値を処理前にTrimする場合
+        for (int i = 0; i < names.length; i++) {
+          if (names[i] != null) {
+            names[i] = TextTrim.trim(names[i], rule);
+          }
+        }
+      }
     } else {
       // 文字列配列でない場合はそのまま返却
       return src;

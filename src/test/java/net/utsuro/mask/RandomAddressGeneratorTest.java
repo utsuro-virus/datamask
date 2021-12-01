@@ -207,7 +207,16 @@ class RandomAddressGeneratorTest extends RandomAddressGenerator {
       when(mockResultSet.next()).thenReturn(false);
 
       String[] ret3 = (String[]) converter.execute(new String[] {"北海道札幌市中央区北二条西２７丁目ダミー番地４－５－６"}, rule);
+
+      // モックの設定: 4回目はTrimすれば値がある想定なのでレコードあり、さっき登録した値を返す
+      when(mockResultSet.next()).thenReturn(true);
+      when(mockResultSet.getString("output_val")).thenReturn(String.join("<>", ret1));
+
+      rule.setBeforeTrim(true);
+      String[] ret4 = (String[]) converter.execute(new String[] {"北海道札幌市中央区北二条西２７丁目ダミー番地１－２－３       "}, rule);
+
       assertEquals(ret1[0], ret2[0], String.format("[%s]<>[%s]はNG", ret1[0], ret2[0]));
+      assertEquals(ret1[0], ret4[0], String.format("[%s]<>[%s]はNG", ret1[0], ret4[0]));
       assertFalse(ret1[0].equals(ret3[0]), String.format("[%s]=[%s]はNG", ret1[0], ret3[0]));
     }
 

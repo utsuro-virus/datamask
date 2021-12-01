@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -53,6 +54,10 @@ import java.util.regex.Pattern;
  * <tr><td>useAfterRepEvenCharMask</td><td>マスク後の置換マスクで偶数目の文字のみマスクするパターンの使用有無</td></tr>
  * <tr><td>maxSjisByteCounts</td><td>住所生成時に返却する配列ごとのSJIS換算byte数をint配列で指定</td></tr>
  * <tr><td>shiftOverflowStrings</td><td>住所生成時に返却する配列ごとの桁溢れ時に次の枠にシフトさせるかどうかをbool配列で指定</td></tr>
+ * <tr><td>beforeTrim</td><td>入力値を処理前にTrimするかどうか</td></tr>
+ * <tr><td>isKeepWideSpaceTrim</td><td>beforeTrim指定時に半角スペースのみTrimするならtrueを指定</td></tr>
+ * <tr><td>useLTrim</td><td>beforeTrim指定時にLTrimをするならtrueを指定</td></tr>
+ * <tr><td>useRTrim</td><td>beforeTrim指定時にRTrimをするならtrueを指定</td></tr>
  * </table>
  */
 public class RandomAddressGenerator implements DataMask {
@@ -104,8 +109,16 @@ public class RandomAddressGenerator implements DataMask {
     String[] addr = null;
     if (rule.isNullReplace() && src == null) {
       addr = new String[0];
-    } else if (src instanceof String[]) {
-      addr = (String[]) src;
+    } else if (src instanceof String[] || src instanceof Object[]) {
+      addr = Arrays.copyOf((Object[]) src, ((Object[]) src).length, String[].class);
+      if (rule.isBeforeTrim()) {
+        // 入力値を処理前にTrimする場合
+        for (int i = 0; i < addr.length; i++) {
+          if (addr[i] != null) {
+            addr[i] = TextTrim.trim(addr[i], rule);
+          }
+        }
+      }
     } else {
       // 文字列配列でない場合はそのまま返却
       return src;
