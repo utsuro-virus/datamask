@@ -215,8 +215,22 @@ class RandomAddressGeneratorTest extends RandomAddressGenerator {
       rule.setBeforeTrim(true);
       String[] ret4 = (String[]) converter.execute(new String[] {"北海道札幌市中央区北二条西２７丁目ダミー番地１－２－３       "}, rule);
 
+      // モックの設定: 5回目はTrimしたら値がない想定なのでレコードなし
+      when(mockResultSet.next()).thenReturn(false);
+
+      rule.setBeforeTrim(true);
+      String[] ret5 = (String[]) converter.execute(new String[] {"       ", "    "}, rule);
+
+      // モックの設定: 5回目はTrimしたら値がないの2回目なのでレコードあり
+      when(mockResultSet.next()).thenReturn(true);
+      when(mockResultSet.getString("output_val")).thenReturn(String.join("<>", ret5));
+
+      rule.setBeforeTrim(true);
+      String[] ret6 = (String[]) converter.execute(new String[] {"       ", "    "}, rule);
+
       assertEquals(ret1[0], ret2[0], String.format("[%s]<>[%s]はNG", ret1[0], ret2[0]));
       assertEquals(ret1[0], ret4[0], String.format("[%s]<>[%s]はNG", ret1[0], ret4[0]));
+      assertEquals(ret5[0], ret6[0], String.format("[%s]<>[%s]はNG", ret5[0], ret6[0]));
       assertFalse(ret1[0].equals(ret3[0]), String.format("[%s]=[%s]はNG", ret1[0], ret3[0]));
     }
 
@@ -718,6 +732,28 @@ class RandomAddressGeneratorTest extends RandomAddressGenerator {
           "123-0001",
           "ダミー県", "ダミー市", "ダミー町", "ダミー番地１－２－３",
           "ダミーケン", "ダミーシ", "ダミーチョウ", "ダミーバンチ１－２－３"};
+      rule.setAddrFormat("%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana");
+      rule.setMaxSjisByteCounts(new int[] {0, 2, 2, 2, 2});
+      rule.setShiftOverflowStrings(new boolean[] {false, true, true, false, false});
+      String[] ret = generate(params, rule);
+      assertEquals("064-0822", ret[0]);
+      assertEquals("北", ret[1]);
+      assertEquals("海", ret[2]);
+      assertEquals("道", ret[3]);
+      assertNotEquals("ダミー番地１－２－３", ret[4]);
+      assertEquals("ほっかいどう", ret[5]);
+      assertEquals("さっぽろしちゅうおうく", ret[6]);
+      assertEquals("きた０２じょうにし２７ちょうめ", ret[7]);
+      assertNotEquals("ダミーバンチ１－２－３", ret[8]);
+    }
+
+    @Test
+    @DisplayName("SJIS換算文字列長さ指定(シフト) nullあり")
+    void case14() throws Exception {
+      String[] params = new String[] {
+          "123-0001",
+          "ダミー県", "ダミー市", "ダミー町", null,
+          "ダミーケン", "ダミーシ", "ダミーチョウ", null};
       rule.setAddrFormat("%zip,%pref,%city,%town,%street,%prefKana,%cityKana,%townKana,%streetKana");
       rule.setMaxSjisByteCounts(new int[] {0, 2, 2, 2, 2});
       rule.setShiftOverflowStrings(new boolean[] {false, true, true, false, false});

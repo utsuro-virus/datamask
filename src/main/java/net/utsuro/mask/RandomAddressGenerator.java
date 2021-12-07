@@ -377,7 +377,7 @@ public class RandomAddressGenerator implements DataMask {
           String[] buff = MaskingUtil.splitBySjisBytes(ret[i], byteCount);
           ret[i] = buff[0];
           if (isShiftOverflow && buff[1] != null && i < ret.length - 1) {
-            ret[i + 1] = buff[1].concat(ret[i + 1]);
+            ret[i + 1] = buff[1].concat((ret[i + 1] != null) ? ret[i + 1] : "");
           }
         }
       }
