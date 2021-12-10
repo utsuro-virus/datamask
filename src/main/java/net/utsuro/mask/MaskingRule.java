@@ -98,7 +98,12 @@ public class MaskingRule {
   /**
    * 元値がNullの場合でも置換するかどうか.
    */
-  private boolean isNullReplace = false;
+  private boolean nullReplace = false;
+
+  /**
+   * 元値が不正日付の場合でも置換するかどうか.
+   */
+  private boolean invalidDateReplace = false;
 
   /**
    * ランダム生成文字の文字種.
@@ -414,7 +419,8 @@ public class MaskingRule {
     this.replacementWideChar = that.getReplacementWideChar();
     this.replacementHalfNum = that.getReplacementHalfNum();
     this.replacementWideNum = that.getReplacementWideNum();
-    this.isNullReplace = that.isNullReplace();
+    this.nullReplace = that.isNullReplace();
+    this.invalidDateReplace = that.isInvalidDateReplace();
     this.randomGenCharType = that.getRandomGenCharType();
     this.randomNoGenCharPattern = that.getRandomNoGenCharPattern();
     this.minValue = that.getMinValue();

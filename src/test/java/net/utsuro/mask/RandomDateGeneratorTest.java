@@ -283,7 +283,20 @@ class RandomDateGeneratorTest extends RandomDateGenerator {
       assertNotEquals("2021/01/17", execute("2021/01/17", rule));
       int[] arr = new int[] {0, 1, 2};
       assertEquals(arr, execute(arr , rule));
+      assertEquals(19309999, execute(19309999, rule));
     }
+
+    @Test
+    @DisplayName("LocalDateTimeに型変換できない場合も置換指定ありなら生成されて返る")
+    void case5() throws Exception {
+      rule.setInvalidDateReplace(true);
+      assertNotEquals("あいう", execute("あいう", rule));
+      assertNotEquals("2021/01/17", execute("2021/01/17", rule));
+      int[] arr = new int[] {0, 1, 2};
+      assertNotEquals(arr, execute(arr , rule));
+      assertNotEquals(19309999, execute(19309999, rule));
+    }
+
 
     @Test
     @DisplayName("LocalDateTimeに型変換できる場合は処理されて返る")

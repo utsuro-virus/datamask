@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
  * <table border="1" style="border-collapse: collapse;">
  * <caption>利用可能なマスキングルール</caption>
  * <tr><th>プロパティ</th><th>説明</th></tr>
- * <tr><td>isNullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>nullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
+ * <tr><td>invalidDateReplace</td><td>元値が不正日付の場合でも置換するかどうか</td></tr>
  * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
  * <tr><td>minDate</td><td>最小値(日付)</td></tr>
  * <tr><td>maxDate</td><td>最大値(日付)</td></tr>
@@ -45,9 +46,14 @@ public class RandomDateGenerator implements DataMask {
         try {
           // LocalDateTimeに統一する
           dt = (LocalDateTime) TypeConverter.convert(src, tempRule);
-        } catch (IllegalArgumentException e) {
-          // 引き渡されたオブジェクトが日付や日付に変換可能な値でない場合はそのまま返却
-          return src;
+        } catch (IllegalArgumentException | java.time.DateTimeException e) {
+          if (rule.isInvalidDateReplace()) {
+            // 不正日付置換ありなら現在日時を元値にセット
+            dt = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+          } else {
+            // 引き渡されたオブジェクトが日付や日付に変換可能な値でない場合はそのまま返却
+            return src;
+          }
         }
       } else {
         dt = (LocalDateTime) src;
