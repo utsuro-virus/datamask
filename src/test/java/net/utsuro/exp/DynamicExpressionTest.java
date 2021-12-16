@@ -346,6 +346,8 @@ class DynamicExpressionTest extends DynamicExpression {
       assertFalse(tree.execute(params));
       tree.parse("%j == '${blank}'");
       assertTrue(tree.execute(params));
+      tree.parse("%j == null");
+      assertTrue(tree.execute(params));
       tree.parse("%k == '${blank}'");
       assertTrue(tree.execute(params));
     }

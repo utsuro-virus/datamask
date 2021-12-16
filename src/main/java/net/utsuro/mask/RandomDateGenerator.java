@@ -1,5 +1,7 @@
 package net.utsuro.mask;
 
+import java.sql.Connection;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
@@ -11,6 +13,8 @@ import java.util.regex.Pattern;
  * <table border="1" style="border-collapse: collapse;">
  * <caption>利用可能なマスキングルール</caption>
  * <tr><th>プロパティ</th><th>説明</th></tr>
+ * <tr><td>isUniqueValue</td><td>生成した値を一意にするかどうか(NULL以外)</td></tr>
+ * <tr><td>isDeterministicReplace</td><td>決定論的置換するかどうか ※INPUTが同じならOUTPUTも同じ値にする(NULL以外)</td></tr>
  * <tr><td>nullReplace</td><td>元値がNullの場合でも置換するかどうか</td></tr>
  * <tr><td>invalidDateReplace</td><td>元値が不正日付の場合でも置換するかどうか</td></tr>
  * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
@@ -21,6 +25,34 @@ import java.util.regex.Pattern;
  * </table>
  */
 public class RandomDateGenerator implements DataMask {
+
+  private static final int RETRY_MAX = 5;
+  private Connection conn;
+
+  /**
+   * このマスク処理でテータベースを使用するかどうか.
+   * @return true=使用する, false=使用しない
+   */
+  @Override
+  public boolean useDatabase(MaskingRule rule) {
+    return (rule.isUniqueValue() || rule.isDeterministicReplace());
+  }
+
+  /**
+   * DBコネクションを取得.
+   * @return conn
+   */
+  public Connection getConnection() {
+    return conn;
+  }
+
+  /**
+   * DBコネクションをセット.
+   * @param conn セットする conn
+   */
+  public void setConnection(Connection conn) {
+    this.conn = conn;
+  }
 
   /**
    * ランダム生成日付に置換する.
@@ -38,18 +70,21 @@ public class RandomDateGenerator implements DataMask {
     }
 
     LocalDateTime dt = null;
+    String dtStr = null;
+    MaskingRule tempRule = new MaskingRule(rule);
+    tempRule.setToClassName(LocalDateTime.class.getName());
 
     if (src != null) {
       if (src.getClass() != LocalDateTime.class) {
-        MaskingRule tempRule = new MaskingRule(rule);
-        tempRule.setToClassName(LocalDateTime.class.getName());
         try {
           // LocalDateTimeに統一する
           dt = (LocalDateTime) TypeConverter.convert(src, tempRule);
+          dtStr = dt.toString();
         } catch (IllegalArgumentException | java.time.DateTimeException e) {
           if (rule.isInvalidDateReplace()) {
             // 不正日付置換ありなら現在日時を元値にセット
             dt = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+            dtStr = src.toString();
           } else {
             // 引き渡されたオブジェクトが日付や日付に変換可能な値でない場合はそのまま返却
             return src;
@@ -57,10 +92,53 @@ public class RandomDateGenerator implements DataMask {
         }
       } else {
         dt = (LocalDateTime) src;
+        dtStr = dt.toString();
       }
     }
 
-    return generate(dt, rule);
+    LocalDateTime ret = null;
+    String retStr = null;
+
+    if (dtStr != null && rule.isDeterministicReplace()) {
+      // 既登録の結果を使用する場合
+      retStr = (String) getRegisteredUniqueVal(rule.getUniqueId(), dtStr);
+      if (retStr != null) {
+        try {
+          // LocalDateTimeに統一する
+          ret = (LocalDateTime) TypeConverter.convert(retStr, tempRule);
+        } catch (IllegalArgumentException | java.time.DateTimeException e) {
+          // 引き渡されたオブジェクトが日付や日付に変換可能な値でない場合はそのまま返却
+          return retStr;
+        }
+      }
+    }
+
+    if (ret == null) {
+      // 新規生成
+      boolean isValid = false;
+      int retryCount = 0;
+      while (!isValid) {
+        ret = generate(dt, rule);
+        // ユニークでないとならない場合は生成結果のチェック
+        if (!rule.isUniqueValue() || !isExistsInUniqueList(rule.getUniqueId(), ret.toString())) {
+          isValid = true;
+          if (rule.isUniqueValue() || rule.isDeterministicReplace()) {
+            // 一貫性が必要な場合とユニーク性が必要な場合はユニークリストに追加
+            // ※リストに追加失敗した場合は再抽選
+            isValid = addUniqueList(rule.getUniqueId(), dtStr, ret.toString());
+            if (!isValid) {
+              retryCount++;
+            }
+            if (retryCount > RETRY_MAX) {
+              // 何度やってもユニークにならない場合、設定ルールがおかしいと思われるのでエラー
+              throw new SQLIntegrityConstraintViolationException(
+                  String.format("%d回重複してユニークリストの登録に失敗しました。", RETRY_MAX));
+            }
+          }
+        }
+      }
+    }
+    return ret;
 
   }
 

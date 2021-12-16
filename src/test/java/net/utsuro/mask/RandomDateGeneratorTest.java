@@ -1,17 +1,30 @@
 package net.utsuro.mask;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 @ExtendWith(MockitoExtension.class)
 class RandomDateGeneratorTest extends RandomDateGenerator {
@@ -23,9 +36,23 @@ class RandomDateGeneratorTest extends RandomDateGenerator {
     MaskingRule rule = new MaskingRule();
 
     @Test
-    @DisplayName("DBは使用しない")
+    @DisplayName("デフォルトではDBは使用しない")
     void case1() throws Exception {
       assertFalse(useDatabase(rule));
+    }
+
+    @Test
+    @DisplayName("isUniqueValue指定時はDBは使用する")
+    void case2() throws Exception {
+      rule.setUniqueValue(true);
+      assertTrue(useDatabase(rule));
+    }
+
+    @Test
+    @DisplayName("isDeterministicReplace指定時はDBは使用する")
+    void case3() throws Exception {
+      rule.setDeterministicReplace(true);
+      assertTrue(useDatabase(rule));
     }
 
   }
@@ -34,10 +61,20 @@ class RandomDateGeneratorTest extends RandomDateGenerator {
   @DisplayName("method: getConnection")
   class GetConnection {
 
+    @Mock
+    Connection mockConn;
+
     @Test
-    @DisplayName("DBは使用しないのでnullが返る")
+    @DisplayName("デフォルトではDBは使用しないのでnullが返る")
     void case1() throws Exception {
       assertEquals(null, getConnection());
+    }
+
+    @Test
+    @DisplayName("セットすればセットしたものが返る")
+    void case2() throws Exception {
+      setConnection(mockConn);
+      assertEquals(mockConn, getConnection());
     }
 
   }
@@ -50,10 +87,10 @@ class RandomDateGeneratorTest extends RandomDateGenerator {
     Connection mockConn;
 
     @Test
-    @DisplayName("DBは使用しないのでセットしてもnullが返る")
+    @DisplayName("セットすればセットしたものが返る")
     void case1() throws Exception {
       setConnection(mockConn);
-      assertEquals(null, getConnection());
+      assertEquals(mockConn, getConnection());
     }
 
   }
@@ -311,6 +348,129 @@ class RandomDateGeneratorTest extends RandomDateGenerator {
       assertNotEquals(val, ret);
       ret = (LocalDateTime) execute(LocalDateTime.parse(val), rule);
       assertNotEquals(val, ret);
+    }
+
+  }
+
+  @Nested
+  @DisplayName("method: execute with Database")
+  class ExecuteWithDatabase {
+
+    MaskingRule rule = new MaskingRule();
+    @Mock
+    Connection mockConn;
+    @Mock
+    PreparedStatement mockPreparedStmnt;
+    @Mock
+    ResultSet mockResultSet;
+
+    @Test
+    @DisplayName("一貫性テスト")
+    void case1() throws Exception {
+      // モックの設定
+      when(mockConn.prepareStatement(anyString())).thenReturn(mockPreparedStmnt);
+      doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
+      when(mockPreparedStmnt.executeQuery()).thenReturn(mockResultSet);
+
+      setConnection(mockConn);
+      rule.setDeterministicReplace(true);
+      rule.setUniqueId("HOGE");
+      rule.setTermFrom("-1000D");
+      rule.setTermTo("1000D");
+
+      // モックの設定: 1回目は値が無い想定なのでレコード無し
+      when(mockResultSet.next()).thenReturn(false);
+
+      LocalDateTime ret1 = (LocalDateTime) execute(LocalDateTime.parse("1945-12-16T00:00:00"), rule);
+
+      // モックの設定: 2回目は値がある想定なのでレコードあり、さっき登録した値を返す
+      when(mockResultSet.next()).thenReturn(true);
+      when(mockResultSet.getString("output_val")).thenReturn(ret1.toString());
+
+      LocalDateTime ret2 = (LocalDateTime) execute(LocalDateTime.parse("1945-12-16T00:00:00"), rule);
+
+      // モックの設定: 3回目は値が無い想定なのでレコード無し
+      when(mockResultSet.next()).thenReturn(false);
+
+      LocalDateTime ret3 = (LocalDateTime) execute(LocalDateTime.parse("2000-01-16T00:00:00"), rule);
+      LocalDateTime ret4 = (LocalDateTime) execute((Object) null, rule);
+
+      // モックの設定: 5回目は不正日付だが値が無い想定なのでレコード無し
+      rule.setInvalidDateReplace(true);
+      when(mockResultSet.next()).thenReturn(false);
+
+      LocalDateTime ret5 = (LocalDateTime) execute(19459999, rule);
+
+      // モックの設定: 6回目は不正日付だが値がある想定なのでレコードあり、さっき登録した値を返す
+      when(mockResultSet.next()).thenReturn(true);
+      when(mockResultSet.getString("output_val")).thenReturn(ret5.toString());
+
+      LocalDateTime ret6 = (LocalDateTime) execute(19459999, rule);
+
+      assertEquals(ret1, ret2, String.format("[%s]<>[%s]はNG", ret1, ret2));
+      assertFalse(ret1.equals(ret3), String.format("[%s]=[%s]はNG", ret1, ret3));
+      assertEquals(null, ret4);
+      assertEquals(ret5, ret6, String.format("[%s]<>[%s]はNG", ret5, ret6));
+    }
+
+    @Test
+    @DisplayName("ユニーク性テスト")
+    void case2() throws Exception {
+      // モックの設定
+      when(mockConn.isClosed()).thenReturn(false);
+      when(mockConn.prepareStatement(anyString())).thenReturn(mockPreparedStmnt);
+      doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
+      when(mockPreparedStmnt.execute()).thenReturn(true);
+
+      // モックの設定： 1回生成した値で呼ばれたらtrueで返す
+      List<String> retList = new ArrayList<>();
+      DataMask converter = spy(new RandomDateGenerator());
+      when(converter.isExistsInUniqueList(anyString(), anyString())).thenAnswer(new Answer<Boolean>() {
+        public Boolean answer(InvocationOnMock invocation) {
+          Object[] args = invocation.getArguments();
+          return Boolean.valueOf(retList.indexOf(args[1]) >= 0);
+        }
+      });
+
+      converter.setConnection(mockConn);
+      rule.setUniqueValue(true);
+      rule.setUniqueId("HOGE");
+      rule.setTermFrom("-1000D");
+      rule.setTermTo("1000D");
+      int count = 1000; //試行回数
+      for (int i = 0; i < count; i++) {
+        LocalDateTime ret = (LocalDateTime) converter.execute(LocalDateTime.parse("1945-12-16T00:00:00"), rule);
+        int idx = retList.indexOf(ret.toString());
+        assertFalse(idx >= 0, String.format("[%d回目:%s]は%d回目ですでに生成されているのでNG", i, ret, idx));
+        retList.add(ret.toString());
+      }
+      assertEquals(1000, retList.size());
+    }
+
+    @Test
+    @DisplayName("一貫性NGテスト")
+    void case3() throws Exception {
+      // モックの設定
+      when(mockConn.prepareStatement(anyString())).thenReturn(mockPreparedStmnt);
+      doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
+      // insert時にexecuteで重複エラーを発生させる
+      doThrow(new SQLIntegrityConstraintViolationException()).when(mockPreparedStmnt).execute();
+      when(mockPreparedStmnt.executeQuery()).thenReturn(mockResultSet);
+      when(mockResultSet.next()).thenReturn(Boolean.FALSE);
+
+      try {
+        setConnection(mockConn);
+        rule.setDeterministicReplace(true);
+        rule.setUniqueId("HOGE");
+        rule.setTermFrom("-1000D");
+        rule.setTermTo("1000D");
+        LocalDateTime ret = (LocalDateTime) execute(LocalDateTime.parse("1945-12-16T00:00:00"), rule);
+        fail(String.format("%s が NGにならなかった", ret));
+      } catch(SQLIntegrityConstraintViolationException e) {
+        assertEquals("5回重複してユニークリストの登録に失敗しました。", e.getMessage());
+      } finally {
+        mockConn.close();
+      }
     }
 
   }
