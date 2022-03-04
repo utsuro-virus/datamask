@@ -158,7 +158,7 @@ class RandomMailAddrReplacerTest extends RandomMailAddrReplacer {
       ret = replace(val, rule);
       assertNotEquals(val, ret);
       assertEquals(val.length(), ret.length());
-      assertTrue(ret.matches("^[a-zA-Z0-9_+-]+(.[a-zA-Z0-9_+-]+)*@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\\.)+[a-zA-Z]{2,}$"));
+      assertTrue(ret.matches("^[a-zA-Z0-9_+-]+(.[a-zA-Z0-9_+-]+)*@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\\.)+[a-zA-Z]{2,}$"), ret);
       val = "fugafuga@example.co.jp";
       ret = replace(val, rule);
       assertNotEquals(val, ret);
@@ -167,9 +167,10 @@ class RandomMailAddrReplacerTest extends RandomMailAddrReplacer {
     }
 
     @Test
-    @DisplayName("トップレベルドメインより元の値の長さが短い場合はユーザー名は1文字")
+    @DisplayName("強制置換あり時、トップレベルドメインより元の値の長さが短い場合はユーザー名は1文字")
     void case11() throws Exception {
       String val = "x";
+      rule.setInvalidMailAddressReplace(true);
       String ret = replace(val, rule);
       assertNotEquals(val, ret);
       assertTrue(val.length() < ret.length());
@@ -177,13 +178,35 @@ class RandomMailAddrReplacerTest extends RandomMailAddrReplacer {
     }
 
     @Test
-    @DisplayName("ドメイン名が選択されたトップレベルドメインより短い場合はドメイン名は1文字")
+    @DisplayName("強制置換あり時、ドメイン名が選択されたトップレベルドメインより短い場合はドメイン名は1文字")
     void case12() throws Exception {
       String val = "xyyy@a";
+      rule.setInvalidMailAddressReplace(true);
       String ret = replace(val, rule);
       assertNotEquals(val, ret);
       assertTrue(val.length() < ret.length());
       assertTrue(ret.matches("^[a-zA-Z0-9_+-]+(.[a-zA-Z0-9_+-]+)*@[a-zA-Z0-9]\\.([a-zA-Z0-9]+\\.)*[a-zA-Z]{2,}$"), ret);
+    }
+
+    @Test
+    @DisplayName("強制置換なし時、メールアドレス形式でない場合はただのランダム文字列置換")
+    void case13() throws Exception {
+      String val = "x";
+      String ret = replace(val, rule);
+      assertNotEquals(val, ret);
+      assertEquals(val.length(), ret.length());
+      assertFalse(ret.matches("^[a-zA-Z0-9_+-]@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\\.)+[a-zA-Z]{2,}$"), ret);
+    }
+
+    @Test
+    @DisplayName("強制置換なし時、メールアドレス形式でない場合はただのランダム文字列置換")
+    void case14() throws Exception {
+      String val = "090-1234-5678.";
+      String ret = replace(val, rule);
+      assertNotEquals(val, ret);
+      assertEquals(val.length(), ret.length());
+      System.out.println(ret);
+      assertFalse(ret.matches("^[a-zA-Z0-9_+-]+(.[a-zA-Z0-9_+-]+)*@[a-zA-Z0-9]\\.([a-zA-Z0-9]+\\.)*[a-zA-Z]{2,}$"), ret);
     }
 
     @Test

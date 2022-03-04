@@ -3,6 +3,8 @@ package net.utsuro.mask;
 import java.sql.Connection;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
+
 import net.utsuro.mask.MaskingUtil.CharType;
 
 /**
@@ -17,6 +19,7 @@ import net.utsuro.mask.MaskingUtil.CharType;
  * <tr><td>ignoreValuePattern</td><td>対象外にする値のパターン(正規表現) ※マッチした場合は元の値そのまま返却</td></tr>
  * <tr><td>DomainReplacement</td><td>メールアドレス生成時のドメイン名</td></tr>
  * <tr><td>randomNoGenCharPattern</td><td>ランダム生成しない文字パターン(正規表現) ※記号はOKでもカンマとかクォートはNGとか自動生成パスワードのlとIやOと0は見分けが付きにくいから除外とか</td></tr>
+ * <tr><td>invalidMailAddressReplace</td><td>元値が不正なメールアドレスの場合でも置換するかどうか ※メールアドレス置換しない場合はランダム文字列置換する</td></tr>
  * </table>
  */
 public class RandomMailAddrReplacer implements DataMask {
@@ -124,8 +127,9 @@ public class RandomMailAddrReplacer implements DataMask {
    * @param src 置換したい文字列
    * @param rule マスク化ルール
    * @return 置換後の文字列
+   * @throws Exception
    */
-  public static String replace(String src, MaskingRule rule) {
+  public static String replace(String src, MaskingRule rule) throws Exception {
 
     StringBuilder sb = new StringBuilder();
 
@@ -148,8 +152,22 @@ public class RandomMailAddrReplacer implements DataMask {
     String base = src.trim();
     String[] c = base.split("");
     int len = c.length;
+    boolean isValidAddr = false;
 
     String domain;
+
+    if (src.matches("^[a-zA-Z0-9_+-]+(.[a-zA-Z0-9_+-]+)*@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\\.)+[a-zA-Z]{2,}$")) {
+      // 元の値がメールアドレス形式かどうか
+      isValidAddr = true;
+    }
+
+    if (!isValidAddr && !rule.isInvalidMailAddressReplace()) {
+      // 不正なメールアドレスの場合に置換しないときはランダム文字列置換する
+      MaskingRule textRepRule = new MaskingRule(rule);
+      textRepRule.setUnmaksedChar(String.format("[%%%s]+", Pattern.quote(String.join("", MaskingUtil.SPECIAL_CHARACTER))));
+      return RandomTextReplacer.replace(src, textRepRule);
+    }
+
     if (rule.getDomainReplacement().length() > 0) {
       // 指定ドメインへの差し替え
       domain = new StringBuilder()
@@ -160,7 +178,7 @@ public class RandomMailAddrReplacer implements DataMask {
       int idx = ThreadLocalRandom.current().nextInt(TOPSEC_DOMAIN.length);
       domain = TOPSEC_DOMAIN[idx];
       // 元のドメイン名の長さでランダム生成
-      int domainLen = len - base.indexOf("@") - domain.length() - 1;
+      int domainLen = len - Math.max(base.indexOf("@"), 0) - domain.length() - 1;
       if (domainLen <= 0) {
         // 長さが足りなくなった場合は1文字
         domainLen = 1;

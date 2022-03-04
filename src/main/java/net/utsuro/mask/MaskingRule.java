@@ -106,6 +106,11 @@ public class MaskingRule {
   private boolean invalidDateReplace = false;
 
   /**
+   * 元値が不正なメールアドレスの場合でも置換するかどうか.
+   */
+  private boolean invalidMailAddressReplace = false;
+
+  /**
    * ランダム生成文字の文字種.
    * ※無指定は元の文字種と同じものを生成
    */
@@ -421,6 +426,7 @@ public class MaskingRule {
     this.replacementWideNum = that.getReplacementWideNum();
     this.nullReplace = that.isNullReplace();
     this.invalidDateReplace = that.isInvalidDateReplace();
+    this.invalidMailAddressReplace = that.isInvalidMailAddressReplace();
     this.randomGenCharType = that.getRandomGenCharType();
     this.randomNoGenCharPattern = that.getRandomNoGenCharPattern();
     this.minValue = that.getMinValue();
