@@ -521,6 +521,10 @@ public abstract class MaskingUtil {
   public static String truncateBySjisBytes(String s, int bytes) {
     String ret = null;
     if (s != null) {
+      if (getSjisByteCount(s) <= bytes) {
+        // 溢れないときはそのまま返す
+        return s;
+      }
       int cnt = 0;
       List<String> charList = Arrays.asList(s.split(""));
       StringBuilder buff = new StringBuilder();
@@ -560,6 +564,10 @@ public abstract class MaskingUtil {
   public static String truncateByEbcdicBytes(String s, int bytes) {
     String ret = null;
     if (s != null) {
+      if (getEbcdicByteCount(s) <= bytes) {
+        // 溢れないときはそのまま返す
+        return s;
+      }
       int cnt = 0;
       List<String> charList = Arrays.asList(s.split(""));
       StringBuilder buff = new StringBuilder();

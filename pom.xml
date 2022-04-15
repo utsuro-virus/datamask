@@ -3,7 +3,7 @@
 
   <groupId>net.utsuro</groupId>
   <artifactId>uv-datamask</artifactId>
-  <version>1.0.13</version>
+  <version>1.0.14</version>
   <packaging>jar</packaging>
 
   <name>uvDataMask</name>
