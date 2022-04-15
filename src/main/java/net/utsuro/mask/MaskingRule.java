@@ -386,6 +386,16 @@ public class MaskingRule {
   private int endIndex = 0;
 
   /**
+   * 文字列末尾省略時のバイト数(EBCDIC換算).
+   */
+  private int truncateEbcdicBytes = 0;
+
+  /**
+   * 文字列末尾省略時のバイト数(SJIS換算).
+   */
+  private int truncateSjisBytes = 0;
+
+  /**
    * 文字列置換時の正規表現.
    */
   private String textReplaceRegex = "";
@@ -478,6 +488,8 @@ public class MaskingRule {
     this.separator = that.getSeparator();
     this.beginIndex = that.getBeginIndex();
     this.endIndex = that.getEndIndex();
+    this.truncateEbcdicBytes = that.getTruncateEbcdicBytes();
+    this.truncateSjisBytes = that.getTruncateSjisBytes();
     this.textReplaceRegex = that.getTextReplaceRegex();
     this.textReplacement = that.getTextReplacement();
     this.beforeTrim = that.isBeforeTrim();

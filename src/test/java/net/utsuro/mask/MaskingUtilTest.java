@@ -172,7 +172,7 @@ class MaskingUtilTest extends MaskingUtil {
     }
 
     @Test
-    @DisplayName("半角文字は2byte換算で分割される")
+    @DisplayName("全角文字は2byte換算で分割される")
     void case2() {
       String[] ret = splitBySjisBytes("１２３４５ＡＢＣＤ", 10);
       assertEquals(2, ret.length);
@@ -224,6 +224,134 @@ class MaskingUtilTest extends MaskingUtil {
       assertEquals("ＢＣＤ", ret[1]);
     }
 
+  }
+
+  @Nested
+  @DisplayName("method: truncateBySjisBytes")
+  class TruncateBySjisBytes {
+
+    @Test
+    @DisplayName("半角文字は1byte換算で省略される")
+    void case1() {
+      String ret = truncateBySjisBytes("12345ABCD", 5);
+      assertEquals("12345", ret);
+    }
+
+    @Test
+    @DisplayName("全角文字は2byte換算で省略される")
+    void case2() {
+      String ret = truncateBySjisBytes("１２３４５ＡＢＣＤ", 10);
+      assertEquals("１２３４５", ret);
+    }
+
+    @Test
+    @DisplayName("nullの場合はnull")
+    void case4() {
+      String ret = truncateBySjisBytes(null, 12);
+      assertEquals(null, ret);
+    }
+
+    @Test
+    @DisplayName("空文字の場合は空文字")
+    void case5() {
+      String ret = truncateBySjisBytes("", 12);
+      assertEquals("", ret);
+    }
+
+    @Test
+    @DisplayName("区切りが2byte文字の半欠けになる場合は前の文字で省略")
+    void case6() {
+      String ret = truncateBySjisBytes("1234ＡＢＣＤ", 7);
+      assertEquals("1234Ａ", ret);
+    }
+
+    @Test
+    @DisplayName("指定byteが同じか長い場合は省略なし")
+    void case7() {
+      String ret = truncateBySjisBytes("1234ＡＢＣＤ", 12);
+      assertEquals("1234ＡＢＣＤ", ret);
+      ret = truncateBySjisBytes("1234ＡＢＣＤ", 13);
+      assertEquals("1234ＡＢＣＤ", ret);
+    }
+
+  }
+
+  @Nested
+  @DisplayName("method: getEbcdicByteCount")
+  class GetEbcdicByteCount {
+
+    @Test
+    @DisplayName("半角文字は1が返る")
+    void case1() {
+      assertEquals(1, getEbcdicByteCount("1"));
+    }
+
+    @Test
+    @DisplayName("全角文字は4が返る")
+    void case2() {
+      assertEquals(4, getEbcdicByteCount("あ"));
+    }
+
+    @Test
+    @DisplayName("半角1byte全角2byte換算でシフトコード分込みでbyte長さを返す")
+    void case3() {
+      // {あ}123ｱ{漢字}
+      assertEquals(14, getEbcdicByteCount("あ123ｱ漢字"));
+    }
+
+  }
+
+  @Nested
+  @DisplayName("method: truncateByEbcdicBytes")
+  class TruncateByEbcdicBytes {
+
+    @Test
+    @DisplayName("半角文字は1byte換算で省略される")
+    void case1() {
+      String ret = truncateByEbcdicBytes("12345ABCD", 5);
+      assertEquals("12345", ret);
+    }
+
+    @Test
+    @DisplayName("全角文字は2byte換算シフトコード込みで省略される")
+    void case2() {
+      String ret = truncateByEbcdicBytes("１２X３４５ＡＢＣＤ", 13);
+      // {１２}X{３４}
+      assertEquals("１２X３４", ret);
+    }
+
+    @Test
+    @DisplayName("nullの場合はnull")
+    void case4() {
+      String ret = truncateByEbcdicBytes(null, 12);
+      assertEquals(null, ret);
+    }
+
+    @Test
+    @DisplayName("空文字の場合は空文字")
+    void case5() {
+      String ret = truncateByEbcdicBytes("", 12);
+      assertEquals("", ret);
+    }
+
+    @Test
+    @DisplayName("区切りが2byte文字の半欠けになる場合は前の文字で省略")
+    void case6() {
+      String ret = truncateByEbcdicBytes("1234ＡＢＣＤ", 9);
+      // 1234{Ａ}
+      assertEquals("1234Ａ", ret);
+    }
+
+    @Test
+    @DisplayName("指定byteが同じか長い場合は省略なし")
+    void case7() {
+      String ret = truncateByEbcdicBytes("1234ＡＢＣＤ", 14);
+      // 1234{ＡＢＣＤ}
+      assertEquals("1234ＡＢＣＤ", ret);
+      // 1234{ＡＢＣＤ}12
+      ret = truncateByEbcdicBytes("1234ＡＢＣＤ12", 16);
+      assertEquals("1234ＡＢＣＤ12", ret);
+    }
   }
 
   @Nested

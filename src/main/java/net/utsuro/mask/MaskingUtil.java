@@ -513,6 +513,72 @@ public abstract class MaskingUtil {
   }
 
   /**
+   * バイト数(SJIS換算)で文字列省略する.
+   * @param s 省略したい文字
+   * @param bytes SJIS換算バイト数
+   * @return SJIS換算バイト数(全角2byte、半角1byte)で省略した文字列 ※半欠けにならないよう文字単位でカット
+   */
+  public static String truncateBySjisBytes(String s, int bytes) {
+    String ret = null;
+    if (s != null) {
+      int cnt = 0;
+      List<String> charList = Arrays.asList(s.split(""));
+      StringBuilder buff = new StringBuilder();
+      // 溢れるまで1文字ずつSJIS換算しながらバッファに格納
+      for (String c : charList) {
+        cnt += getSjisByteCount(c);
+        if (cnt <= bytes) {
+          buff.append(c);
+        } else {
+          break;
+        }
+      }
+      ret = buff.toString();
+    }
+    return ret;
+  }
+
+  /**
+   * バイト数(EBCDIC換算)を返す.
+   * @param s カウントしたい文字
+   * @return EBCDIC換算バイト数(全角2byte、半角1byte、nullは0byte、シフトコード込み)
+   */
+  public static int getEbcdicByteCount(String s) {
+    int ret = 0;
+    if (s != null && s.length() > 0) {
+      ret = s.getBytes(Charset.forName("Cp930")).length;
+    }
+    return ret;
+  }
+
+  /**
+   * バイト数(EBCDIC換算)で文字列省略する.
+   * @param s 省略したい文字
+   * @param bytes EBCDIC換算バイト数
+   * @return EBCDIC換算バイト数(全角2byte、半角1byte、シフトコード込み)で省略した文字列 ※半欠けにならないよう文字単位でカット
+   */
+  public static String truncateByEbcdicBytes(String s, int bytes) {
+    String ret = null;
+    if (s != null) {
+      int cnt = 0;
+      List<String> charList = Arrays.asList(s.split(""));
+      StringBuilder buff = new StringBuilder();
+      // 溢れるまで1文字ずつEBCDIC換算しながらバッファに格納
+      for (String c : charList) {
+        cnt = getEbcdicByteCount(buff.append(c).toString());
+        if (cnt > bytes) {
+          buff.deleteCharAt(buff.length() - 1);
+          break;
+        } else if (cnt == bytes) {
+          break;
+        }
+      }
+      ret = buff.toString();
+    }
+    return ret;
+  }
+
+  /**
    * 半角カナ小文字を大文字にして返す.
    * @param s 対象の文字
    * @return 置換後の文字
